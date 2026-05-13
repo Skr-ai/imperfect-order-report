@@ -10,6 +10,11 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.5;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
 
+/* ===== Site Bar ===== */
+.site-bar{text-align:center;padding:14px 0 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
+.site-bar .site-name{font-size:16px;font-weight:700;color:#1d1d1f;text-decoration:none;letter-spacing:.5px}
+.site-bar .site-name::before{content:'';display:inline-block;width:9px;height:9px;background:linear-gradient(135deg,#e85d4a,#c0392b);border-radius:50%;margin-right:7px;vertical-align:middle}
+
 /* ===== Header (frosted glass) ===== */
 .header{background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08);padding:16px 32px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between}
 .header-left h1{font-size:18px;font-weight:700;color:#1d1d1f;letter-spacing:-.2px}
@@ -161,6 +166,9 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </style>
 </head>
 <body>
+
+<!-- Site Bar -->
+<div class="site-bar"><a href="index.html" class="site-name">玛瑙的小站</a></div>
 
 <!-- Header -->
 <div class="header">
@@ -391,7 +399,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div>
 </div>
 
-<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-12</div>
+<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-14</div>
 </div>
 
 <script>
