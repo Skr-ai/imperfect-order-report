@@ -13,26 +13,34 @@ body {
   padding: 0 20px 40px;
 }
 .site-bar {
-  text-align: center;
-  padding: 20px 0 16px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  margin-bottom: 32px;
 }
-.site-bar .site-name {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1d1d1f;
-  letter-spacing: 0.5px;
+.site-bar .site-logo {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #e85d4a, #c0392b);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  box-shadow: 0 2px 8px rgba(232,93,74,0.3);
 }
-.site-bar .site-name::before {
+.site-bar .site-logo::after {
   content: '';
-  display: inline-block;
   width: 10px;
   height: 10px;
-  background: linear-gradient(135deg, #e85d4a, #c0392b);
+  background: #fff;
   border-radius: 50%;
-  margin-right: 8px;
-  vertical-align: middle;
+}
+.site-bar .site-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d1d1f;
+  letter-spacing: 0.3px;
 }
 .container {
   max-width: 800px;
@@ -105,7 +113,7 @@ body {
 </style>
 </head>
 <body>
-<div class="site-bar"><span class="site-name">玛瑙的小站</span></div>
+<div class="site-bar"><div class="site-logo"></div><span class="site-name">玛瑙的小站</span></div>
 <div class="container">
   <div class="header">
     <h1>严重不完美订单报表</h1>
