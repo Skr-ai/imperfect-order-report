@@ -19,21 +19,33 @@ body {
   margin-bottom: 32px;
 }
 .site-bar .site-logo {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #e85d4a, #c0392b);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 30% 30%, #f4a89a, #c0392b 40%, #6b1a0f 80%, #2c0a04);
+  box-shadow: 0 2px 8px rgba(192,57,43,0.35), inset 0 -2px 4px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,200,180,0.4);
   margin-right: 10px;
-  box-shadow: 0 2px 8px rgba(232,93,74,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.site-bar .site-logo::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 5px;
+  width: 12px;
+  height: 8px;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.6), transparent);
+  border-radius: 50%;
 }
 .site-bar .site-logo::after {
   content: '';
-  width: 10px;
-  height: 10px;
-  background: #fff;
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,255,255,0.45);
   border-radius: 50%;
 }
 .site-bar .site-name {
