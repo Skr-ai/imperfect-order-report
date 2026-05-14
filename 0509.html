@@ -11,9 +11,10 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.5;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* ===== Site Bar ===== */
-.site-bar{display:flex;align-items:center;padding:12px 24px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
-.site-bar .site-logo{width:28px;height:28px;background:linear-gradient(135deg,#e85d4a,#c0392b);border-radius:7px;display:flex;align-items:center;justify-content:center;margin-right:9px;box-shadow:0 2px 6px rgba(232,93,74,.25)}
-.site-bar .site-logo::after{content:'';width:9px;height:9px;background:#fff;border-radius:50%}
+.site-bar{display:flex;align-items:center;padding:10px 24px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
+.site-bar .site-logo{width:26px;height:26px;border-radius:50%;background:radial-gradient(ellipse at 30% 30%,#f4a89a,#c0392b 40%,#6b1a0f 80%,#2c0a04);box-shadow:0 2px 6px rgba(192,57,43,.3),inset 0 -2px 3px rgba(0,0,0,.2),inset 0 2px 3px rgba(255,200,180,.4);margin-right:9px;position:relative;overflow:hidden}
+.site-bar .site-logo::before{content:'';position:absolute;top:3px;left:4px;width:10px;height:7px;background:radial-gradient(ellipse,rgba(255,255,255,.6),transparent);border-radius:50%}
+.site-bar .site-logo::after{content:'';position:absolute;top:3px;right:3px;width:4px;height:4px;background:rgba(255,255,255,.45);border-radius:50%}
 .site-bar .site-name{font-size:14px;font-weight:700;color:#1d1d1f;text-decoration:none;letter-spacing:.3px}
 
 /* ===== Header (frosted glass) ===== */
