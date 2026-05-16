@@ -7,48 +7,44 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f4f8; padding: 24px; color: #1a202c; }
-.container { max-width: 1000px; margin: 0 auto; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; padding: 24px; color: #1a202c; }
+.container { max-width: 960px; margin: 0 auto; }
 .header { text-align: center; margin-bottom: 32px; }
-.header h1 { font-size: 24px; color: #2d3748; margin-bottom: 4px; }
-.header .subtitle { color: #718096; font-size: 14px; }
-.summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
-.card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.card .label { font-size: 13px; color: #718096; margin-bottom: 6px; }
-.card .value { font-size: 28px; font-weight: 700; }
-.card .change { font-size: 13px; margin-top: 4px; }
-.card .change.up { color: #e53e3e; }
-.card .change.down { color: #38a169; }
-.chart-section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.chart-section h2 { font-size: 16px; color: #2d3748; margin-bottom: 16px; }
-.chart-container { position: relative; height: 300px; }
-.table-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
-.table-section h2 { font-size: 16px; color: #2d3748; margin-bottom: 16px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { background: #f7fafc; padding: 10px 12px; text-align: right; font-weight: 600; color: #4a5568; border-bottom: 2px solid #e2e8f0; }
+.header h1 { font-size: 22px; color: #1a202c; font-weight: 700; margin-bottom: 4px; }
+.header .subtitle { color: #6b7280; font-size: 13px; }
+.summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+.card { background: white; border-radius: 10px; padding: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.card .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+.card .value { font-size: 26px; font-weight: 700; }
+.card .change { font-size: 12px; margin-top: 3px; }
+.card .change.up { color: #dc2626; }
+.card .change.down { color: #16a34a; }
+.section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.section h2 { font-size: 14px; color: #374151; margin-bottom: 14px; font-weight: 600; }
+.chart-container { position: relative; height: 240px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px 10px; text-align: right; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; font-size: 12px; }
 th:first-child { text-align: left; }
-td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #edf2f7; }
-td:first-child { text-align: left; font-weight: 500; }
-tr:hover { background: #f7fafc; }
-.trend-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; }
-.trend-badge.up { background: #fed7d7; color: #c53030; }
-.trend-badge.down { background: #c6f6d5; color: #276749; }
-.trend-badge.flat { background: #e2e8f0; color: #4a5568; }
-.footer { text-align: center; margin-top: 24px; color: #a0aec0; font-size: 12px; }
-.station-section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.station-section h2 { font-size: 16px; color: #2d3748; margin-bottom: 16px; }
-.station-item { padding: 14px 16px; border-bottom: 1px solid #edf2f7; line-height: 1.7; font-size: 14px; }
+td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #f3f4f6; }
+td:first-child { text-align: left; font-weight: 500; color: #374151; }
+.trend-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.trend-badge.up { background: #fef2f2; color: #dc2626; }
+.trend-badge.down { background: #f0fdf4; color: #16a34a; }
+.trend-badge.flat { background: #f3f4f6; color: #6b7280; }
+.station-section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.station-section h2 { font-size: 14px; color: #374151; margin-bottom: 14px; font-weight: 600; }
+.station-item { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; line-height: 1.6; font-size: 13px; }
 .station-item:last-child { border-bottom: none; }
-.station-name { font-weight: 600; color: #2d3748; }
-.station-total { font-weight: 700; color: #e53e3e; margin: 0 2px; }
-.station-detail { color: #4a5568; }
-.station-compare { margin-left: 8px; font-size: 13px; }
-.station-compare.improve { color: #38a169; font-weight: 600; }
-.station-compare.worse { color: #e53e3e; font-weight: 600; }
-.station-compare.flat { color: #718096; }
-.station-compare.new { color: #805ad5; font-weight: 600; }
-.station-summary { padding: 16px; background: #f7fafc; border-radius: 8px; margin-top: 16px; font-size: 14px; line-height: 1.8; color: #2d3748; }
-@media (max-width: 768px) { .summary-cards { grid-template-columns: repeat(2, 1fr); } }
+.station-name { font-weight: 600; color: #1f2937; }
+.station-total { font-weight: 700; color: #dc2626; }
+.station-compare { font-size: 12px; }
+.station-compare.improve { color: #16a34a; font-weight: 600; }
+.station-compare.worse { color: #dc2626; font-weight: 600; }
+.station-compare.flat { color: #6b7280; }
+.station-compare.new { color: #7c3aed; font-weight: 600; }
+.station-summary { padding: 14px; background: #f9fafb; border-radius: 6px; margin-top: 14px; font-size: 13px; line-height: 1.7; color: #374151; }
+.footer { text-align: center; margin-top: 20px; color: #9ca3af; font-size: 11px; }
+@media (max-width: 768px) { .summary-cards { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -61,41 +57,36 @@ tr:hover { background: #f7fafc; }
   <div class="summary-cards">
     <div class="card">
       <div class="label">最新日不完美订单</div>
-      <div class="value" style="color:#2d3748">213</div>
-      <div class="change up">较前日 +4 (+1.9%)</div>
-    </div>
-    <div class="card">
-      <div class="label">涉及骑手数</div>
-      <div class="value" style="color:#4299e1">91</div>
-      <div class="change up">较前日 +1 (+1.1%)</div>
+      <div class="value" style="color:#1f2937">213</div>
+      <div class="change up">较前日 +4单 (+1.9%)</div>
     </div>
     <div class="card">
       <div class="label">较峰值下降</div>
-      <div class="value" style="color:#38a169">-66.6%</div>
+      <div class="value" style="color:#16a34a">-66.6%</div>
       <div class="change down">峰值638单(5/8) → 213单</div>
     </div>
     <div class="card">
       <div class="label">近3日均值</div>
-      <div class="value" style="color:#805ad5">218</div>
+      <div class="value" style="color:#7c3aed">218</div>
       <div class="change down">较前3日均值(331)降34.1%</div>
     </div>
   </div>
 
-  <div class="chart-section">
+  <div class="section">
     <h2>不完美订单总量趋势</h2>
     <div class="chart-container">
       <canvas id="totalChart"></canvas>
     </div>
   </div>
 
-  <div class="chart-section">
+  <div class="section">
     <h2>分类指标趋势</h2>
     <div class="chart-container">
       <canvas id="categoryChart"></canvas>
     </div>
   </div>
 
-  <div class="table-section">
+  <div class="section">
     <h2>每日数据明细</h2>
     <table>
       <thead>
@@ -103,7 +94,6 @@ tr:hover { background: #f7fafc; }
           <th>日期</th>
           <th>总单</th>
           <th>环比</th>
-          <th>骑手数</th>
           <th>配送超时</th>
           <th>未妥投</th>
           <th>提前/虚假</th>
@@ -112,13 +102,6 @@ tr:hover { background: #f7fafc; }
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
-  </div>
-
-  <div class="chart-section">
-    <h2>骑手数趋势</h2>
-    <div class="chart-container">
-      <canvas id="riderChart"></canvas>
-    </div>
   </div>
 
   <div class="station-section">
@@ -162,40 +145,41 @@ tr:hover { background: #f7fafc; }
   </div>
 
   <div class="footer">
-    数据来源：<a href="https://skr-ai.github.io/imperfect-order-report/" target="_blank">观星台 - 严重不完美订单报表</a> | 自动生成于 2026-05-16
+    数据来源：<a href="https://skr-ai.github.io/imperfect-order-report/" target="_blank" style="color:#6b7280;">观星台 - 严重不完美订单报表</a> | 自动生成于 2026-05-16
   </div>
 </div>
 
 <script>
 const data = [
-  { date: '5/5', total: 232, riders: 98, timeout: 36, noDeliver: 9, earlyFake: 143, unsatisfied: 50 },
-  { date: '5/6', total: 139, riders: 63, timeout: 36, noDeliver: 12, earlyFake: 72, unsatisfied: 23 },
-  { date: '5/7', total: 106, riders: 71, timeout: 17, noDeliver: 2, earlyFake: 64, unsatisfied: 27 },
-  { date: '5/8', total: 638, riders: 138, timeout: 58, noDeliver: 85, earlyFake: 390, unsatisfied: 132 },
-  { date: '5/9', total: 337, riders: 114, timeout: 77, noDeliver: 22, earlyFake: 191, unsatisfied: 59 },
-  { date: '5/10', total: 331, riders: 101, timeout: 71, noDeliver: 23, earlyFake: 180, unsatisfied: 68 },
-  { date: '5/11', total: 232, riders: 98, timeout: 36, noDeliver: 9, earlyFake: 143, unsatisfied: 50 },
-  { date: '5/12', total: 209, riders: 90, timeout: 24, noDeliver: 8, earlyFake: 124, unsatisfied: 60 },
-  { date: '5/13', total: 213, riders: 91, timeout: 38, noDeliver: 15, earlyFake: 125, unsatisfied: 41 },
+  { date: '5/5', total: 232, timeout: 36, noDeliver: 9, earlyFake: 143, unsatisfied: 50 },
+  { date: '5/6', total: 139, timeout: 36, noDeliver: 12, earlyFake: 72, unsatisfied: 23 },
+  { date: '5/7', total: 106, timeout: 17, noDeliver: 2, earlyFake: 64, unsatisfied: 27 },
+  { date: '5/8', total: 638, timeout: 58, noDeliver: 85, earlyFake: 390, unsatisfied: 132 },
+  { date: '5/9', total: 337, timeout: 77, noDeliver: 22, earlyFake: 191, unsatisfied: 59 },
+  { date: '5/10', total: 331, timeout: 71, noDeliver: 23, earlyFake: 180, unsatisfied: 68 },
+  { date: '5/11', total: 232, timeout: 36, noDeliver: 9, earlyFake: 143, unsatisfied: 50 },
+  { date: '5/12', total: 209, timeout: 24, noDeliver: 8, earlyFake: 124, unsatisfied: 60 },
+  { date: '5/13', total: 213, timeout: 38, noDeliver: 15, earlyFake: 125, unsatisfied: 41 },
 ];
 
 const labels = data.map(d => d.date);
 
-// Total trend chart
+// Total trend chart - clean minimal style
 new Chart(document.getElementById('totalChart'), {
   type: 'line',
   data: {
     labels,
     datasets: [{
-      label: '不完美订单数',
       data: data.map(d => d.total),
-      borderColor: '#e53e3e',
-      backgroundColor: 'rgba(229, 62, 62, 0.08)',
+      borderColor: '#dc2626',
+      backgroundColor: 'rgba(220, 38, 38, 0.04)',
       fill: true,
-      tension: 0.3,
-      pointRadius: 5,
-      pointBackgroundColor: '#e53e3e',
-      borderWidth: 2.5
+      tension: 0.4,
+      pointRadius: 4,
+      pointBackgroundColor: '#dc2626',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      borderWidth: 2
     }]
   },
   options: {
@@ -203,59 +187,34 @@ new Chart(document.getElementById('totalChart'), {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} 单` } }
+      tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' 单' } }
     },
     scales: {
-      y: { beginAtZero: true, grid: { color: '#edf2f7' } },
-      x: { grid: { display: false } }
+      y: { beginAtZero: false, grid: { color: '#f3f4f6', drawBorder: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } }
     }
   }
 });
 
-// Category trend chart
+// Category trend chart - clean style
 new Chart(document.getElementById('categoryChart'), {
   type: 'line',
   data: {
     labels,
     datasets: [
-      { label: '提前/虚假', data: data.map(d => d.earlyFake), borderColor: '#d69e2e', backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3 },
-      { label: '配送超时', data: data.map(d => d.timeout), borderColor: '#e53e3e', backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3 },
-      { label: '不满意', data: data.map(d => d.unsatisfied), borderColor: '#805ad5', backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3 },
-      { label: '未妥投', data: data.map(d => d.noDeliver), borderColor: '#3182ce', backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3 },
+      { label: '提前/虚假', data: data.map(d => d.earlyFake), borderColor: '#f59e0b', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#f59e0b' },
+      { label: '配送超时', data: data.map(d => d.timeout), borderColor: '#dc2626', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#dc2626' },
+      { label: '不满意', data: data.map(d => d.unsatisfied), borderColor: '#7c3aed', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#7c3aed' },
+      { label: '未妥投', data: data.map(d => d.noDeliver), borderColor: '#2563eb', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#2563eb' },
     ]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: 'top' } },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 16, font: { size: 11 } } } },
     scales: {
-      y: { beginAtZero: true, grid: { color: '#edf2f7' } },
-      x: { grid: { display: false } }
-    }
-  }
-});
-
-// Rider trend chart
-new Chart(document.getElementById('riderChart'), {
-  type: 'bar',
-  data: {
-    labels,
-    datasets: [{
-      label: '涉及骑手数',
-      data: data.map(d => d.riders),
-      backgroundColor: 'rgba(66, 153, 225, 0.6)',
-      borderColor: '#3182ce',
-      borderWidth: 1,
-      borderRadius: 4
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      y: { beginAtZero: true, grid: { color: '#edf2f7' } },
-      x: { grid: { display: false } }
+      y: { beginAtZero: true, grid: { color: '#f3f4f6', drawBorder: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } }
     }
   }
 });
@@ -270,13 +229,12 @@ data.forEach((d, i) => {
     const pct = ((diff / prev) * 100).toFixed(1);
     const cls = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
     const sign = diff > 0 ? '+' : '';
-    changeHtml = `<span class="trend-badge ${cls}">${sign}${diff} (${sign}${pct}%)</span>`;
+    changeHtml = `<span class="trend-badge ${cls}">${sign}${diff} 单(${sign}${pct}%)</span>`;
   }
   tbody.innerHTML += `<tr>
     <td>${d.date}</td>
     <td><strong>${d.total}</strong></td>
     <td>${changeHtml}</td>
-    <td>${d.riders}</td>
     <td>${d.timeout}</td>
     <td>${d.noDeliver}</td>
     <td>${d.earlyFake}</td>
