@@ -35,6 +35,19 @@ tr:hover { background: #f7fafc; }
 .trend-badge.down { background: #c6f6d5; color: #276749; }
 .trend-badge.flat { background: #e2e8f0; color: #4a5568; }
 .footer { text-align: center; margin-top: 24px; color: #a0aec0; font-size: 12px; }
+.station-section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.station-section h2 { font-size: 16px; color: #2d3748; margin-bottom: 16px; }
+.station-item { padding: 14px 16px; border-bottom: 1px solid #edf2f7; line-height: 1.7; font-size: 14px; }
+.station-item:last-child { border-bottom: none; }
+.station-name { font-weight: 600; color: #2d3748; }
+.station-total { font-weight: 700; color: #e53e3e; margin: 0 2px; }
+.station-detail { color: #4a5568; }
+.station-compare { margin-left: 8px; font-size: 13px; }
+.station-compare.improve { color: #38a169; font-weight: 600; }
+.station-compare.worse { color: #e53e3e; font-weight: 600; }
+.station-compare.flat { color: #718096; }
+.station-compare.new { color: #805ad5; font-weight: 600; }
+.station-summary { padding: 16px; background: #f7fafc; border-radius: 8px; margin-top: 16px; font-size: 14px; line-height: 1.8; color: #2d3748; }
 @media (max-width: 768px) { .summary-cards { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
@@ -105,6 +118,46 @@ tr:hover { background: #f7fafc; }
     <h2>骑手数趋势</h2>
     <div class="chart-container">
       <canvas id="riderChart"></canvas>
+    </div>
+  </div>
+
+  <div class="station-section">
+    <h2>5/13 站点达成情况（对比前日）</h2>
+    <div class="station-item">
+      <span class="station-name">麻豆人-番禺区大学城站</span>，<span class="station-total">66</span>单<span class="station-detail">（提前/虚假43、不满意25）</span><span class="station-compare improve">前日97单，↓31单，改善</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">厦门派得快-广铁职院科教城站</span>，<span class="station-total">46</span>单<span class="station-detail">（超时24、提前/虚假18、不满意4）</span><span class="station-compare worse">前日27单，↑19单，恶化</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">12</span>单<span class="station-detail">（提前/虚假9、未妥投3）</span><span class="station-compare worse">前日8单，↑4单，恶化</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">即享送-红星村站</span>，<span class="station-total">11</span>单<span class="station-detail">（未妥投6、超时4）</span><span class="station-compare new">前日无数据，新增</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">深圳优地-仲恺任意门站</span>，<span class="station-total">10</span>单<span class="station-detail">（提前/虚假9）</span><span class="station-compare worse">前日6单，↑4单，恶化</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">6</span>单<span class="station-detail">（提前/虚假2、超时2、不满意2）</span><span class="station-compare worse">前日4单，↑2单，小幅恶化</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">集一-广青花都校区站</span>，<span class="station-total">6</span>单<span class="station-detail">（提前/虚假5）</span><span class="station-compare new">前日无数据，新增</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">6</span>单<span class="station-detail">（超时3、提前/虚假2）</span><span class="station-compare flat">前日5单，持平</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">深圳优地-城市理工学院站</span>，<span class="station-total">5</span>单<span class="station-detail">（提前/虚假4、不满意2）</span><span class="station-compare flat">前日5单，持平</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">广州松严-涉外经济职院站</span>，<span class="station-total">4</span>单<span class="station-detail">（提前/虚假4）</span><span class="station-compare worse">前日2单，↑2单，小幅恶化</span>
+    </div>
+    <div class="station-item">
+      <span class="station-name">广州晟丽-工程技术职业学院校外站</span>，<span class="station-total">4</span>单<span class="station-detail">（提前/虚假3）</span><span class="station-compare improve">前日9单，↓5单，改善</span>
+    </div>
+    <div class="station-summary">
+      <strong>总结：</strong>大学城站（↓31）和工程技术职业学院站（↓5）改善显著；5/13回升主要由科教城站（↑19）和红星村新增（+11）拉动，合计贡献+30单，抵消了其他站点的改善成果。
     </div>
   </div>
 
