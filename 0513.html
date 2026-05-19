@@ -49,6 +49,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text'
 .card{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .card-title{font-size:15px;font-weight:700;color:#1d1d1f;margin-bottom:16px;letter-spacing:-.1px}
 .card-desc{font-size:12px;color:#86868b;margin-bottom:14px}
+.station-item{padding:10px 16px;border-radius:10px;margin-bottom:8px;background:#f9f9fb;border:1px solid rgba(0,0,0,.04);font-size:13px;color:#1d1d1f;line-height:1.6}
+.station-item .station-name{font-weight:600;color:#1d1d1f;margin-bottom:2px}
+.station-item .station-stats{color:#555;font-size:12.5px}
+.station-item .station-stats .s-num{font-weight:700;color:#ff3b30}
+.station-item .station-stats .s-label{color:#86868b}
 
 /* ===== Charts ===== */
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -187,13 +192,13 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
 <!-- Main Tabs -->
 <div class="main-tabs" id="mainTabs">
-  <div class="main-tab active" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
-  <div class="main-tab" data-tab="overview">概览</div>
+  <div class="main-tab active" data-tab="overview">概览</div>
+  <div class="main-tab" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
   <div class="main-tab" data-tab="org_feedback">归因标签 <span class="badge" id="badge-org">-</span></div>
 </div>
 
 <!-- ====== TAB: 概览 ====== -->
-<div class="tab-content" id="tab-overview">
+<div class="tab-content active" id="tab-overview">
 <div class="tab-panel">
 
 <!-- KPI -->
@@ -204,6 +209,15 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
   <div class="kpi accent-purple"><div class="dot"></div><div class="label">提前/虚假配送</div><div class="value" id="kv-early">-</div><div class="sub" id="ks-early"></div></div>
   <div class="kpi accent-blue"><div class="dot"></div><div class="label">不满意</div><div class="value" id="kv-unsat">-</div><div class="sub" id="ks-unsat"></div></div>
   <div class="kpi accent-green"><div class="dot"></div><div class="label">配送成功</div><div class="value" id="kv-success">-</div><div class="sub" id="ks-success"></div></div>
+</div>
+
+<!-- 站点维度汇总 -->
+<div class="card">
+  <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('stationBody'),a=document.getElementById('stationArrow');if(b.style.display==='none'){b.style.display='block';a.textContent='▲'}else{b.style.display='none';a.textContent='▼'}">
+    <span>站点维度汇总</span><span id="stationArrow" style="font-size:12px;color:#86868b">▲</span>
+  </div>
+  <div class="card-desc">各站点严重不完美订单分布，按总单倒序　·　<a href="javascript:void(0)" onclick="event.stopPropagation();document.querySelector('[data-tab=rider]').click()" style="color:#007aff;text-decoration:none;font-weight:600">运单详情可在「站点明细」查看 →</a></div>
+  <div id="stationBody"><div id="stationSummary" style="padding:4px 0"></div></div>
 </div>
 
 <!-- 判定口径分布 -->
@@ -321,10 +335,10 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div><!-- tab-overview -->
 
 <!-- ====== TAB: 站点明细 ====== -->
-<div class="tab-content active" id="tab-rider">
+<div class="tab-content" id="tab-rider">
 <div class="tab-panel">
   <div class="card-title" style="margin-bottom:4px">站点明细</div>
-  <div class="card-desc" style="margin-bottom:14px">按骑手聚合窄口径严重不完美订单，展示触发次数、分类与归因（按站点分组）</div>
+  <div class="card-desc" style="margin-bottom:14px;color:#007aff;font-weight:500">按骑手聚合窄口径严重不完美订单，点击骑手后可查看该骑手的不完美订单详情</div>
 
   <div class="filter-bar">
     <label>筛选:</label>
@@ -401,7 +415,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div>
 </div>
 
-<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-16</div>
+<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-19</div>
 </div>
 
 <script>
@@ -550,6 +564,19 @@ new Chart(document.getElementById('chartPeriod'),{
     tr.innerHTML=`<td data-val="${k}"><b>${k}</b></td><td data-val="${v.riders}">${v.riders}</td><td data-val="${v.total}"><b style="color:#ff3b30">${v.total}</b></td><td data-val="${v.timeout}">${v.timeout}</td><td data-val="${v.no_deliver}">${v.no_deliver}</td><td data-val="${v.early_fake}">${v.early_fake}</td><td data-val="${v.unsat}">${v.unsat}</td><td>${pct(v.total,N)} <div class="pct-bar" style="width:${Math.max(2,v.total/N*120)}px"></div></td>`;
     t.appendChild(tr);
   });
+})();
+
+/* ===== 站点维度汇总 ===== */
+(function(){
+  const bt=D.by_team_name||{};const el=document.getElementById('stationSummary');if(!el)return;
+  const sorted=Object.entries(bt).sort((a,b)=>b[1].total-a[1].total);
+  if(!sorted.length){el.innerHTML='<div style="color:#86868b;font-size:13px;padding:8px">暂无站点数据</div>';return;}
+  let html='<div class="detail-wrap" style="max-height:400px"><table id="tableStationSummary"><thead><tr><th onclick="sortT(\'tableStationSummary\',0)">站点名称 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',1)">骑手数 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',2)">累计总单 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',3)">超时 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',4)">未妥投 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',5)">提前/虚假 <span class="sa">&#9650;&#9660;</span></th><th onclick="sortT(\'tableStationSummary\',6)">不满意 <span class="sa">&#9650;&#9660;</span></th><th>占比</th></tr></thead><tbody>';
+  sorted.forEach(([name,v])=>{
+    html+=`<tr><td data-val="${name}"><b>${name}</b></td><td data-val="${v.riders}">${v.riders}</td><td data-val="${v.total}"><b style="color:#ff3b30">${v.total}</b></td><td data-val="${v.timeout}">${v.timeout}</td><td data-val="${v.no_deliver}">${v.no_deliver}</td><td data-val="${v.early_fake}">${v.early_fake}</td><td data-val="${v.unsat}">${v.unsat}</td><td>${pct(v.total,N)} <div class="pct-bar" style="width:${Math.max(2,v.total/N*120)}px"></div></td></tr>`;
+  });
+  html+='</tbody></table></div>';
+  el.innerHTML=html;
 })();
 
 /* ===== Global Cause Analysis ===== */
