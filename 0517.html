@@ -192,13 +192,13 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
 <!-- Main Tabs -->
 <div class="main-tabs" id="mainTabs">
-  <div class="main-tab active" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
-  <div class="main-tab" data-tab="overview">概览</div>
+  <div class="main-tab active" data-tab="overview">概览</div>
+  <div class="main-tab" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
   <div class="main-tab" data-tab="org_feedback">归因标签 <span class="badge" id="badge-org">-</span></div>
 </div>
 
 <!-- ====== TAB: 概览 ====== -->
-<div class="tab-content" id="tab-overview">
+<div class="tab-content active" id="tab-overview">
 <div class="tab-panel">
 
 <!-- KPI -->
@@ -214,7 +214,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <!-- 站点维度汇总 -->
 <div class="card">
   <div class="card-title">站点维度汇总</div>
-  <div class="card-desc">各站点严重不完美订单分布，按总单倒序</div>
+  <div class="card-desc">各站点严重不完美订单分布，按总单倒序　·　<a href="javascript:void(0)" onclick="document.querySelector('[data-tab=rider]').click()" style="color:#007aff;text-decoration:none;font-weight:600">运单详情可在「站点明细」查看 →</a></div>
   <div id="stationSummary" style="padding:4px 0"></div>
 </div>
 
@@ -333,7 +333,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div><!-- tab-overview -->
 
 <!-- ====== TAB: 站点明细 ====== -->
-<div class="tab-content active" id="tab-rider">
+<div class="tab-content" id="tab-rider">
 <div class="tab-panel">
   <div class="card-title" style="margin-bottom:4px">站点明细</div>
   <div class="card-desc" style="margin-bottom:14px">按骑手聚合窄口径严重不完美订单，展示触发次数、分类与归因（按站点分组）</div>
