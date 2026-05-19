@@ -49,6 +49,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text'
 .card{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .card-title{font-size:15px;font-weight:700;color:#1d1d1f;margin-bottom:16px;letter-spacing:-.1px}
 .card-desc{font-size:12px;color:#86868b;margin-bottom:14px}
+.station-item{padding:10px 16px;border-radius:10px;margin-bottom:8px;background:#f9f9fb;border:1px solid rgba(0,0,0,.04);font-size:13px;color:#1d1d1f;line-height:1.6}
+.station-item .station-name{font-weight:600;color:#1d1d1f;margin-bottom:2px}
+.station-item .station-stats{color:#555;font-size:12.5px}
+.station-item .station-stats .s-num{font-weight:700;color:#ff3b30}
+.station-item .station-stats .s-label{color:#86868b}
 
 /* ===== Charts ===== */
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -204,6 +209,13 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
   <div class="kpi accent-purple"><div class="dot"></div><div class="label">提前/虚假配送</div><div class="value" id="kv-early">-</div><div class="sub" id="ks-early"></div></div>
   <div class="kpi accent-blue"><div class="dot"></div><div class="label">不满意</div><div class="value" id="kv-unsat">-</div><div class="sub" id="ks-unsat"></div></div>
   <div class="kpi accent-green"><div class="dot"></div><div class="label">配送成功</div><div class="value" id="kv-success">-</div><div class="sub" id="ks-success"></div></div>
+</div>
+
+<!-- 站点维度汇总 -->
+<div class="card">
+  <div class="card-title">站点维度汇总</div>
+  <div class="card-desc">各站点严重不完美订单分布，按总单倒序</div>
+  <div id="stationSummary" style="padding:4px 0"></div>
 </div>
 
 <!-- 判定口径分布 -->
@@ -550,6 +562,18 @@ new Chart(document.getElementById('chartPeriod'),{
     tr.innerHTML=`<td data-val="${k}"><b>${k}</b></td><td data-val="${v.riders}">${v.riders}</td><td data-val="${v.total}"><b style="color:#ff3b30">${v.total}</b></td><td data-val="${v.timeout}">${v.timeout}</td><td data-val="${v.no_deliver}">${v.no_deliver}</td><td data-val="${v.early_fake}">${v.early_fake}</td><td data-val="${v.unsat}">${v.unsat}</td><td>${pct(v.total,N)} <div class="pct-bar" style="width:${Math.max(2,v.total/N*120)}px"></div></td>`;
     t.appendChild(tr);
   });
+})();
+
+/* ===== 站点维度汇总 ===== */
+(function(){
+  const bt=D.by_team_name||{};const el=document.getElementById('stationSummary');if(!el)return;
+  const sorted=Object.entries(bt).sort((a,b)=>b[1].total-a[1].total);
+  if(!sorted.length){el.innerHTML='<div style="color:#86868b;font-size:13px;padding:8px">暂无站点数据</div>';return;}
+  let html='';
+  sorted.forEach(([name,v])=>{
+    html+=`<div class="station-item"><div class="station-name">${name}</div><div class="station-stats"><span class="s-label">累计</span> <span class="s-num">${v.total}</span><span class="s-label"> 单，超时</span> <span class="s-num">${v.timeout}</span><span class="s-label"> 单，未妥投</span> <span class="s-num">${v.no_deliver}</span><span class="s-label"> 单，提前/虚假</span> <span class="s-num">${v.early_fake}</span><span class="s-label"> 单，不满意</span> <span class="s-num">${v.unsat}</span><span class="s-label"> 单</span></div></div>`;
+  });
+  el.innerHTML=html;
 })();
 
 /* ===== Global Cause Analysis ===== */
