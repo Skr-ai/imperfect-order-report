@@ -37,12 +37,22 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
 .trend-badge.up { background: #fef2f2; color: #dc2626; }
 .trend-badge.down { background: #f0fdf4; color: #16a34a; }
 .trend-badge.flat { background: #f3f4f6; color: #6b7280; }
-.station-section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.station-section h2 { font-size: 14px; color: #374151; margin-bottom: 14px; font-weight: 600; cursor: pointer; }
-.station-section h2::after { content: ' ▼'; font-size: 10px; color: #9ca3af; }
-.station-section.collapsed h2::after { content: ' ▶'; }
-.station-section.collapsed .station-content { display: none; }
-.station-item { padding: 10px 14px; border-bottom: 1px solid #f3f4f6; line-height: 1.6; font-size: 13px; }
+.station-section { background: white; border-radius: 10px; padding: 0; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); overflow: hidden; border-left: 3px solid #d1d5db; }
+.station-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.station-header:hover { background: #f9fafb; }
+.station-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.hdr-date { font-size: 14px; font-weight: 700; color: #1f2937; }
+.hdr-total { font-size: 13px; color: #6b7280; font-weight: 500; }
+.hdr-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.hdr-badge.hdr-improve { background: #f0fdf4; color: #16a34a; }
+.hdr-badge.hdr-worse { background: #fef2f2; color: #dc2626; }
+.hdr-badge.hdr-flat { background: #f3f4f6; color: #6b7280; }
+.hdr-arrow { display: inline-block; width: 18px; height: 18px; background: #f3f4f6; border-radius: 50%; position: relative; flex-shrink: 0; transition: transform 0.2s; }
+.hdr-arrow::after { content: ''; position: absolute; top: 6px; left: 5.5px; width: 6px; height: 6px; border-right: 1.5px solid #6b7280; border-bottom: 1.5px solid #6b7280; transform: rotate(45deg); transition: transform 0.2s; }
+.station-section.collapsed .hdr-arrow::after { transform: rotate(-45deg); top: 7px; }
+.station-content { max-height: 2000px; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; opacity: 1; }
+.station-section.collapsed .station-content { max-height: 0; opacity: 0; transition: max-height 0.3s ease, opacity 0.15s ease; }
+.station-item { padding: 10px 18px; border-bottom: 1px solid #f3f4f6; line-height: 1.6; font-size: 13px; }
 .station-item:last-child { border-bottom: none; }
 .station-name { font-weight: 600; color: #1f2937; }
 .station-total { font-weight: 700; color: #dc2626; }
@@ -51,7 +61,7 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
 .station-compare.worse { color: #dc2626; font-weight: 600; }
 .station-compare.flat { color: #6b7280; }
 .station-compare.new { color: #7c3aed; font-weight: 600; }
-.station-summary { padding: 14px; background: #f9fafb; border-radius: 6px; margin-top: 12px; font-size: 13px; line-height: 1.7; color: #374151; }
+.station-summary { padding: 14px 18px; background: #f9fafb; font-size: 13px; line-height: 1.7; color: #374151; }
 .footer { text-align: center; margin-top: 20px; color: #9ca3af; font-size: 11px; }
 @media (max-width: 768px) { .summary-cards { grid-template-columns: 1fr; } }
 </style>
@@ -114,464 +124,581 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
     </table>
   </div>
 
-  <div class="station-section">
-    <h2>5/5 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">87</span>单（提前/虚假62、不满意27、未妥投2），<span class="station-compare flat">首日数据</span>
+  <div class="station-section" style="border-left:3px solid #dc2626;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/17</span>
+        <span class="hdr-total">202单</span>
+        <span class="hdr-badge hdr-worse">+28</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假27、超时10、不满意5），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">13</span>单（提前/虚假6、超时3、不满意2、未妥投3），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">12</span>单（提前/虚假2、超时9、不满意1），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假6、超时4、不满意2），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">9</span>单（提前/虚假4、不满意5），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假3、超时3），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">餐谋天下-白云文艺职业学院</span>，<span class="station-total">5</span>单（超时1、不满意1、未妥投3），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共232单。<br>
-      <strong>持续改善方向：</strong>头部站点麻豆人-大学城站仍居高位（87单），主要分布在提前/虚假(62)、不满意(27)，需持续改善。
-    </div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/6 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">29</span>单（提前/虚假10、超时13、未妥投6），<span class="station-compare improve">前日42单，↓13单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">22</span>单（提前/虚假13、不满意11），<span class="station-compare improve">前日87单，↓65单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">15</span>单（提前/虚假13、不满意3），<span class="station-compare worse">前日5单，↑10单，严重恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">14</span>单（超时13、不满意1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">6</span>单（提前/虚假3、超时2、不满意1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">集一-南洋站</span>，<span class="station-total">5</span>单（提前/虚假2、未妥投3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">5</span>单（提前/虚假4、不满意1），<span class="station-compare improve">前日6单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日12单，↓8单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">4</span>单（提前/虚假2、超时1、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-涉外经济职院</span>，<span class="station-total">4</span>单（提前/虚假3、超时1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共139单，较前日（232单）下降93单。 改善站点：麻豆人-大学城站（↓65）、厦门派得快-科教城站（↓13）、深圳优地-城市理工学院（↓8）、深圳优地-仲恺站（↓1）。 恶化站点：智安信息-花都广二师站（↑10），需重点关注。 新增站点：广州易送达-生态校内站（14单）、广州胜凯-水利水电站（6单）、集一-南洋站（5单）、广州优送达-机电职业技术学院（4单）、广州松严-涉外经济职院（4单）。<br>
-      <strong>持续改善方向：</strong>智安信息-花都广二师站恶化↑10单，主要问题：提前/虚假13单、不满意3单，建议加强该站点运力调度与骑手管理。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">64</span>单（提前/虚假37、不满意26、未妥投1），<span class="station-compare worse">前日56单，↑8单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">54</span>单（提前/虚假16、超时35、不满意3、未妥投2），<span class="station-compare worse">前日42单，↑12单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-增城科教城大学城站</span>，<span class="station-total">32</span>单（超时32），<span class="station-compare improve">前日56单，↓24单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">12</span>单（提前/虚假10、不满意2），<span class="station-compare worse">前日4单，↑8单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">6</span>单（提前/虚假2、超时4），<span class="station-compare worse">前日4单，↑2单，小幅恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日8单，↓4单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日14单，↓10单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">3</span>单（提前/虚假3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">3</span>单（提前/虚假2、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">2</span>单（提前/虚假1、不满意1），<span class="station-compare improve">前日6单，↓4单，小幅改善</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共202单，较前日（174单）上升28单。 改善站点：广州晟丽-增城科教城大学城站（↓24）、闪送侠-增城华商学院（↓10）、深圳优地-城市理工学院（↓4）、广州优送达-机电职业技术学院（↓4）。 恶化站点：厦门派得快-科教城站（↑12）、麻豆人-大学城站（↑8）、深圳优地-仲恺站（↑8）、广州云闪送-松田职业学院（↑2），需重点关注。 新增站点：广州晟丽-工程技术职业学院站（3单）、广州松严-番禺职业技术学院（3单）。<br>
+        <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑12单，主要问题：提前/虚假16单、超时35单、未妥投2单、不满意3单，建议加强该站点运力调度与骑手管理。 麻豆人-大学城站恶化↑8单，主要问题：提前/虚假37单、未妥投1单、不满意26单，建议加强该站点运力调度与骑手管理。 深圳优地-仲恺站恶化↑8单，主要问题：提前/虚假10单、不满意2单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（64单），主要分布在提前/虚假(37)、不满意(26)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/7 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">21</span>单（提前/虚假13、不满意8），<span class="station-compare improve">前日22单，↓1单，小幅改善</span>
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/16</span>
+        <span class="hdr-total">174单</span>
+        <span class="hdr-badge hdr-improve">-206</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">12</span>单（提前/虚假6、超时3、不满意3），<span class="station-compare improve">前日29单，↓17单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假1、超时8、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">8</span>单（提前/虚假7、不满意1），<span class="station-compare worse">前日6单，↑2单，小幅恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假6），<span class="station-compare improve">前日15单，↓9单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意3、未妥投1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">前日5单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-增城科教城大学城站</span>，<span class="station-total">3</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日22单，↓19单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">3</span>单（提前/虚假3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共106单，较前日（139单）下降33单。 改善站点：广州晟丽-增城科教城大学城站（↓19）、厦门派得快-科教城站（↓17）、智安信息-花都广二师站（↓9）、麻豆人-大学城站（↓1）。 恶化站点：广州胜凯-水利水电站（↑2），需重点关注。 新增站点：广州云闪送-松田职业学院（11单）、广州松严-番禺职业技术学院（6单）、广州特牛-南方学院（6单）、广州易送达-金融学院校外站（3单）。<br>
-      <strong>持续改善方向：</strong>广州胜凯-水利水电站恶化↑2单，主要问题：提前/虚假7单、不满意1单，建议加强该站点运力调度与骑手管理。
-    </div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/8 站点达成明细（对比前日）</h2>
-    <div class="station-item" style="color:#6b7280;">该日期报表无骑手级数据，无法按站点拆分。当日总计638单。</div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/9 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">111</span>单（提前/虚假80、超时1、不满意33、未妥投4），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">108</span>单（提前/虚假32、超时61、不满意9、未妥投11），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州天河壬丰商圈</span>，<span class="station-total">11</span>单（提前/虚假8、超时1、不满意2），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">9</span>单（提前/虚假9），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">7</span>单（提前/虚假7），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州永乐-暨南大学番禺校区</span>，<span class="station-total">7</span>单（提前/虚假5、超时2），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州天河龙洞商圈</span>，<span class="station-total">7</span>单（提前/虚假4、不满意3），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州资进-岭南校内站</span>，<span class="station-total">6</span>单（提前/虚假2、超时4），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意2），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州荣榕-广科工贸站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共337单，较前日（638单）下降301单。<br>
-      <strong>持续改善方向：</strong>头部站点麻豆人-大学城站仍居高位（111单），主要分布在提前/虚假(80)、超时(1)、不满意(33)，需持续改善。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">56</span>单（提前/虚假30、不满意28、未妥投1），<span class="station-compare improve">前日105单，↓49单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假11、超时28、不满意2、未妥投2），<span class="station-compare improve">前日43单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">14</span>单（提前/虚假6、超时8、不满意1），<span class="station-compare worse">前日7单，↑7单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">8</span>单（提前/虚假7、超时1），<span class="station-compare worse">前日6单，↑2单，小幅恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">6</span>单（超时6），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-外语艺术职业学院(龙洞)</span>，<span class="station-total">4</span>单（提前/虚假1、超时1、未妥投2），<span class="station-compare improve">前日20单，↓16单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日8单，↓4单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-涉外经济职院</span>，<span class="station-total">4</span>单（提前/虚假1、超时3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">4</span>单（提前/虚假1、超时3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共174单，较前日（380单）下降206单。 改善站点：麻豆人-大学城站（↓49）、广州晟丽-外语艺术职业学院(龙洞)（↓16）、深圳优地-仲恺站（↓4）、厦门派得快-科教城站（↓1）。 恶化站点：闪送侠-增城华商学院（↑7）、深圳优地-城市理工学院（↑2），需重点关注。 新增站点：广州优送达-机电职业技术学院（6单）、广州特牛-南方学院（5单）、广州松严-涉外经济职院（4单）、广州云闪送-松田职业学院（4单）。<br>
+        <strong>持续改善方向：</strong>闪送侠-增城华商学院恶化↑7单，主要问题：提前/虚假6单、超时8单、不满意1单，建议加强该站点运力调度与骑手管理。 深圳优地-城市理工学院恶化↑2单，主要问题：提前/虚假7单、超时1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（56单），主要分布在提前/虚假(30)、不满意(28)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/10 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">128</span>单（提前/虚假58、超时56、不满意13、未妥投4），<span class="station-compare worse">前日108单，↑20单，严重恶化</span>
+  <div class="station-section" style="border-left:3px solid #dc2626;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/15</span>
+        <span class="hdr-total">380单</span>
+        <span class="hdr-badge hdr-worse">+95</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">105</span>单（提前/虚假68、超时1、不满意35、未妥投5），<span class="station-compare improve">前日111单，↓6单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州荣榕-广科工贸站</span>，<span class="station-total">13</span>单（提前/虚假5、超时7、不满意1、未妥投1），<span class="station-compare worse">前日5单，↑8单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">8</span>单（提前/虚假3、不满意1、未妥投4），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州天河壬丰商圈</span>，<span class="station-total">7</span>单（提前/虚假7、不满意3），<span class="station-compare improve">前日11单，↓4单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">7</span>单（提前/虚假5、不满意2），<span class="station-compare improve">前日9单，↓2单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假2、不满意1、未妥投3），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州天河龙洞商圈</span>，<span class="station-total">6</span>单（提前/虚假2、不满意4），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意2），<span class="station-compare flat">前日6单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">6</span>单（提前/虚假4、超时1、不满意1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共331单，较前日（337单）下降6单。 改善站点：麻豆人-大学城站（↓6）、广州天河壬丰商圈（↓4）、深圳优地-仲恺站（↓2）、智安信息-花都广二师站（↓1）、广州天河龙洞商圈（↓1）。 恶化站点：厦门派得快-科教城站（↑20）、广州荣榕-广科工贸站（↑8），需重点关注。 新增站点：广州易送达-金融学院校外站（8单）、闪送侠-增城华商学院（6单）。<br>
-      <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑20单，主要问题：提前/虚假58单、超时56单、未妥投4单、不满意13单，建议加强该站点运力调度与骑手管理。 广州荣榕-广科工贸站恶化↑8单，主要问题：提前/虚假5单、超时7单、未妥投1单、不满意1单，建议加强该站点运力调度与骑手管理。 头部站点厦门派得快-科教城站仍居高位（128单），主要分布在提前/虚假(58)、超时(56)、不满意(13)，需持续改善。
-    </div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/11 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">87</span>单（提前/虚假62、不满意27、未妥投2），<span class="station-compare improve">前日105单，↓18单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假27、超时10、不满意5），<span class="station-compare improve">前日128单，↓86单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">13</span>单（提前/虚假6、超时3、不满意2、未妥投3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">12</span>单（提前/虚假2、超时9、不满意1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假6、超时4、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">9</span>单（提前/虚假4、不满意5），<span class="station-compare worse">前日6单，↑3单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假3、超时3），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare improve">前日6单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">餐谋天下-白云文艺职业学院</span>，<span class="station-total">5</span>单（超时1、不满意1、未妥投3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共232单，较前日（331单）下降99单。 改善站点：厦门派得快-科教城站（↓86）、麻豆人-大学城站（↓18）、深圳优地-仲恺站（↓1）、智安信息-花都广二师站（↓1）。 恶化站点：广州松严-番禺职业技术学院（↑3），需重点关注。 新增站点：广州晟丽-工程技术职业学院站（13单）、深圳优地-城市理工学院（12单）、广州云闪送-松田职业学院（11单）、餐谋天下-白云文艺职业学院（5单）、广州特牛-南方学院（5单）。<br>
-      <strong>持续改善方向：</strong>广州松严-番禺职业技术学院恶化↑3单，主要问题：提前/虚假4单、不满意5单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（87单），主要分布在提前/虚假(62)、不满意(27)，需持续改善。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">142</span>单（提前/虚假4、超时59、不满意1、未妥投79），<span class="station-compare worse">前日6单，↑136单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">105</span>单（提前/虚假54、超时18、不满意34、未妥投4），<span class="station-compare improve">前日106单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">43</span>单（提前/虚假13、超时23、不满意6、未妥投1），<span class="station-compare improve">前日60单，↓17单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-外语艺术职业学院(龙洞)</span>，<span class="station-total">20</span>单（提前/虚假12、超时4、不满意1、未妥投4），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">8</span>单（提前/虚假5、不满意3），<span class="station-compare flat">前日8单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">7</span>单（提前/虚假6、不满意1），<span class="station-compare improve">前日13单，↓6单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">6</span>单（提前/虚假6、不满意1），<span class="station-compare worse">前日4单，↑2单，小幅恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">4</span>单（提前/虚假1、超时1、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">麻豆人-广外大学城校区</span>，<span class="station-total">4</span>单（提前/虚假2、超时2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共380单，较前日（285单）上升95单。 改善站点：厦门派得快-科教城站（↓17）、闪送侠-增城华商学院（↓6）、麻豆人-大学城站（↓1）。 恶化站点：广州易送达-金融学院校外站（↑136）、深圳优地-城市理工学院（↑2），需重点关注。 新增站点：广州晟丽-外语艺术职业学院(龙洞)（20单）、广州易送达-生态校内站（4单）、麻豆人-广外大学城校区（4单）、广州松严-番禺职业技术学院（4单）。<br>
+        <strong>持续改善方向：</strong>广州易送达-金融学院校外站恶化↑136单，主要问题：提前/虚假4单、超时59单、未妥投79单、不满意1单，建议加强该站点运力调度与骑手管理。 深圳优地-城市理工学院恶化↑2单，主要问题：提前/虚假6单、不满意1单，建议加强该站点运力调度与骑手管理。 头部站点广州易送达-金融学院校外站仍居高位（142单），主要分布在提前/虚假(4)、超时(59)、不满意(1)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/12 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">97</span>单（提前/虚假56、不满意45、未妥投1），<span class="station-compare worse">前日87单，↑10单，严重恶化</span>
+  <div class="station-section" style="border-left:3px solid #dc2626;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/14</span>
+        <span class="hdr-total">285单</span>
+        <span class="hdr-badge hdr-worse">+72</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">27</span>单（提前/虚假14、超时12、不满意2），<span class="station-compare improve">前日42单，↓15单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">10</span>单（提前/虚假9、不满意1），<span class="station-compare worse">前日5单，↑5单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">9</span>单（提前/虚假3、超时3、不满意1、未妥投2），<span class="station-compare improve">前日13单，↓4单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">8</span>单（提前/虚假7、未妥投1），<span class="station-compare worse">前日5单，↑3单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">7</span>单（提前/虚假7），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假4、超时1、不满意1），<span class="station-compare flat">前日6单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">6</span>单（提前/虚假1、超时3、不满意1、未妥投1），<span class="station-compare improve">前日11单，↓5单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">5</span>单（提前/虚假4、不满意1），<span class="station-compare improve">前日12单，↓7单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">5</span>单（提前/虚假3、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共209单，较前日（232单）下降23单。 改善站点：厦门派得快-科教城站（↓15）、深圳优地-城市理工学院（↓7）、广州云闪送-松田职业学院（↓5）、广州晟丽-工程技术职业学院站（↓4）。 恶化站点：麻豆人-大学城站（↑10）、广州特牛-南方学院（↑5）、智安信息-花都广二师站（↑3），需重点关注。 新增站点：广州胜凯-水利水电站（7单）、广州易送达-金融学院校外站（5单）。<br>
-      <strong>持续改善方向：</strong>麻豆人-大学城站恶化↑10单，主要问题：提前/虚假56单、未妥投1单、不满意45单，建议加强该站点运力调度与骑手管理。 广州特牛-南方学院恶化↑5单，主要问题：提前/虚假9单、不满意1单，建议加强该站点运力调度与骑手管理。 智安信息-花都广二师站恶化↑3单，主要问题：提前/虚假7单、未妥投1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（97单），主要分布在提前/虚假(56)、不满意(45)，需持续改善。
-    </div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/13 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">66</span>单（提前/虚假43、不满意25、未妥投1），<span class="station-compare improve">前日97单，↓31单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">46</span>单（提前/虚假18、超时24、不满意4、未妥投1），<span class="station-compare worse">前日27单，↑19单，严重恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">12</span>单（提前/虚假9、未妥投3），<span class="station-compare worse">前日8单，↑4单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">即享送-红星村站</span>，<span class="station-total">11</span>单（提前/虚假1、超时4、未妥投6），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">10</span>单（提前/虚假9、超时1），<span class="station-compare worse">前日6单，↑4单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">6</span>单（提前/虚假2、超时2、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">集一-广青花都校区站</span>，<span class="station-total">6</span>单（提前/虚假5、超时1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">6</span>单（提前/虚假2、超时3、不满意1），<span class="station-compare worse">前日5单，↑1单，小幅恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">5</span>单（提前/虚假4、不满意2），<span class="station-compare flat">前日5单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日9单，↓5单，改善</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共213单，较前日（209单）上升4单。 改善站点：麻豆人-大学城站（↓31）、广州晟丽-工程技术职业学院站（↓5）。 恶化站点：厦门派得快-科教城站（↑19）、智安信息-花都广二师站（↑4）、深圳优地-仲恺站（↑4）、广州易送达-金融学院校外站（↑1），需重点关注。 新增站点：即享送-红星村站（11单）、广州易送达-生态校内站（6单）、集一-广青花都校区站（6单）。<br>
-      <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑19单，主要问题：提前/虚假18单、超时24单、未妥投1单、不满意4单，建议加强该站点运力调度与骑手管理。 智安信息-花都广二师站恶化↑4单，主要问题：提前/虚假9单、未妥投3单，建议加强该站点运力调度与骑手管理。 深圳优地-仲恺站恶化↑4单，主要问题：提前/虚假9单、超时1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（66单），主要分布在提前/虚假(43)、不满意(25)，需持续改善。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">106</span>单（提前/虚假64、超时13、不满意34、未妥投4），<span class="station-compare worse">前日66单，↑40单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">60</span>单（提前/虚假32、超时19、不满意4、未妥投8），<span class="station-compare worse">前日46单，↑14单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">13</span>单（提前/虚假7、超时1、不满意5、未妥投1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">集一-广青花都校区站</span>，<span class="station-total">12</span>单（提前/虚假5、超时7），<span class="station-compare worse">前日6单，↑6单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">9</span>单（提前/虚假2、超时4、不满意2、未妥投1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">8</span>单（提前/虚假8），<span class="station-compare worse">前日4单，↑4单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">8</span>单（提前/虚假8），<span class="station-compare improve">前日10单，↓2单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假6），<span class="station-compare improve">前日12单，↓6单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">6</span>单（提前/虚假3、超时1、不满意1、未妥投2），<span class="station-compare flat">前日6单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日5单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共285单，较前日（213单）上升72单。 改善站点：智安信息-花都广二师站（↓6）、深圳优地-仲恺站（↓2）、深圳优地-城市理工学院（↓1）。 恶化站点：麻豆人-大学城站（↑40）、厦门派得快-科教城站（↑14）、集一-广青花都校区站（↑6）、广州晟丽-工程技术职业学院站（↑4），需重点关注。 新增站点：闪送侠-增城华商学院（13单）、广州云闪送-松田职业学院（9单）。<br>
+        <strong>持续改善方向：</strong>麻豆人-大学城站恶化↑40单，主要问题：提前/虚假64单、超时13单、未妥投4单、不满意34单，建议加强该站点运力调度与骑手管理。 厦门派得快-科教城站恶化↑14单，主要问题：提前/虚假32单、超时19单、未妥投8单、不满意4单，建议加强该站点运力调度与骑手管理。 集一-广青花都校区站恶化↑6单，主要问题：提前/虚假5单、超时7单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（106单），主要分布在提前/虚假(64)、超时(13)、不满意(34)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/14 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">106</span>单（提前/虚假64、超时13、不满意34、未妥投4），<span class="station-compare worse">前日66单，↑40单，严重恶化</span>
+  <div class="station-section" style="border-left:3px solid #f59e0b;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/13</span>
+        <span class="hdr-total">213单</span>
+        <span class="hdr-badge hdr-worse">+4</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">60</span>单（提前/虚假32、超时19、不满意4、未妥投8），<span class="station-compare worse">前日46单，↑14单，严重恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">13</span>单（提前/虚假7、超时1、不满意5、未妥投1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">集一-广青花都校区站</span>，<span class="station-total">12</span>单（提前/虚假5、超时7），<span class="station-compare worse">前日6单，↑6单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">9</span>单（提前/虚假2、超时4、不满意2、未妥投1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">8</span>单（提前/虚假8），<span class="station-compare worse">前日4单，↑4单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">8</span>单（提前/虚假8），<span class="station-compare improve">前日10单，↓2单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假6），<span class="station-compare improve">前日12单，↓6单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">6</span>单（提前/虚假3、超时1、不满意1、未妥投2），<span class="station-compare flat">前日6单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日5单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共285单，较前日（213单）上升72单。 改善站点：智安信息-花都广二师站（↓6）、深圳优地-仲恺站（↓2）、深圳优地-城市理工学院（↓1）。 恶化站点：麻豆人-大学城站（↑40）、厦门派得快-科教城站（↑14）、集一-广青花都校区站（↑6）、广州晟丽-工程技术职业学院站（↑4），需重点关注。 新增站点：闪送侠-增城华商学院（13单）、广州云闪送-松田职业学院（9单）。<br>
-      <strong>持续改善方向：</strong>麻豆人-大学城站恶化↑40单，主要问题：提前/虚假64单、超时13单、未妥投4单、不满意34单，建议加强该站点运力调度与骑手管理。 厦门派得快-科教城站恶化↑14单，主要问题：提前/虚假32单、超时19单、未妥投8单、不满意4单，建议加强该站点运力调度与骑手管理。 集一-广青花都校区站恶化↑6单，主要问题：提前/虚假5单、超时7单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（106单），主要分布在提前/虚假(64)、超时(13)、不满意(34)，需持续改善。
-    </div>
-  </div>
-
-  <div class="station-section">
-    <h2>5/15 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">142</span>单（提前/虚假4、超时59、不满意1、未妥投79），<span class="station-compare worse">前日6单，↑136单，严重恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">105</span>单（提前/虚假54、超时18、不满意34、未妥投4），<span class="station-compare improve">前日106单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">43</span>单（提前/虚假13、超时23、不满意6、未妥投1），<span class="station-compare improve">前日60单，↓17单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-外语艺术职业学院(龙洞)</span>，<span class="station-total">20</span>单（提前/虚假12、超时4、不满意1、未妥投4），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">8</span>单（提前/虚假5、不满意3），<span class="station-compare flat">前日8单，持平</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">7</span>单（提前/虚假6、不满意1），<span class="station-compare improve">前日13单，↓6单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">6</span>单（提前/虚假6、不满意1），<span class="station-compare worse">前日4单，↑2单，小幅恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">4</span>单（提前/虚假1、超时1、不满意2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">麻豆人-广外大学城校区</span>，<span class="station-total">4</span>单（提前/虚假2、超时2），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共380单，较前日（285单）上升95单。 改善站点：厦门派得快-科教城站（↓17）、闪送侠-增城华商学院（↓6）、麻豆人-大学城站（↓1）。 恶化站点：广州易送达-金融学院校外站（↑136）、深圳优地-城市理工学院（↑2），需重点关注。 新增站点：广州晟丽-外语艺术职业学院(龙洞)（20单）、广州易送达-生态校内站（4单）、麻豆人-广外大学城校区（4单）、广州松严-番禺职业技术学院（4单）。<br>
-      <strong>持续改善方向：</strong>广州易送达-金融学院校外站恶化↑136单，主要问题：提前/虚假4单、超时59单、未妥投79单、不满意1单，建议加强该站点运力调度与骑手管理。 深圳优地-城市理工学院恶化↑2单，主要问题：提前/虚假6单、不满意1单，建议加强该站点运力调度与骑手管理。 头部站点广州易送达-金融学院校外站仍居高位（142单），主要分布在提前/虚假(4)、超时(59)、不满意(1)，需持续改善。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">66</span>单（提前/虚假43、不满意25、未妥投1），<span class="station-compare improve">前日97单，↓31单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">46</span>单（提前/虚假18、超时24、不满意4、未妥投1），<span class="station-compare worse">前日27单，↑19单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">12</span>单（提前/虚假9、未妥投3），<span class="station-compare worse">前日8单，↑4单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">即享送-红星村站</span>，<span class="station-total">11</span>单（提前/虚假1、超时4、未妥投6），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">10</span>单（提前/虚假9、超时1），<span class="station-compare worse">前日6单，↑4单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">6</span>单（提前/虚假2、超时2、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">集一-广青花都校区站</span>，<span class="station-total">6</span>单（提前/虚假5、超时1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">6</span>单（提前/虚假2、超时3、不满意1），<span class="station-compare worse">前日5单，↑1单，小幅恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">5</span>单（提前/虚假4、不满意2），<span class="station-compare flat">前日5单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日9单，↓5单，改善</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共213单，较前日（209单）上升4单。 改善站点：麻豆人-大学城站（↓31）、广州晟丽-工程技术职业学院站（↓5）。 恶化站点：厦门派得快-科教城站（↑19）、智安信息-花都广二师站（↑4）、深圳优地-仲恺站（↑4）、广州易送达-金融学院校外站（↑1），需重点关注。 新增站点：即享送-红星村站（11单）、广州易送达-生态校内站（6单）、集一-广青花都校区站（6单）。<br>
+        <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑19单，主要问题：提前/虚假18单、超时24单、未妥投1单、不满意4单，建议加强该站点运力调度与骑手管理。 智安信息-花都广二师站恶化↑4单，主要问题：提前/虚假9单、未妥投3单，建议加强该站点运力调度与骑手管理。 深圳优地-仲恺站恶化↑4单，主要问题：提前/虚假9单、超时1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（66单），主要分布在提前/虚假(43)、不满意(25)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/16 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">56</span>单（提前/虚假30、不满意28、未妥投1），<span class="station-compare improve">前日105单，↓49单，改善</span>
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/12</span>
+        <span class="hdr-total">209单</span>
+        <span class="hdr-badge hdr-improve">-23</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假11、超时28、不满意2、未妥投2），<span class="station-compare improve">前日43单，↓1单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">14</span>单（提前/虚假6、超时8、不满意1），<span class="station-compare worse">前日7单，↑7单，恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">8</span>单（提前/虚假7、超时1），<span class="station-compare worse">前日6单，↑2单，小幅恶化</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">6</span>单（超时6），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-外语艺术职业学院(龙洞)</span>，<span class="station-total">4</span>单（提前/虚假1、超时1、未妥投2），<span class="station-compare improve">前日20单，↓16单，改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日8单，↓4单，小幅改善</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-涉外经济职院</span>，<span class="station-total">4</span>单（提前/虚假1、超时3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">4</span>单（提前/虚假1、超时3），<span class="station-compare new">前日无数据，新增</span>
-    </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共174单，较前日（380单）下降206单。 改善站点：麻豆人-大学城站（↓49）、广州晟丽-外语艺术职业学院(龙洞)（↓16）、深圳优地-仲恺站（↓4）、厦门派得快-科教城站（↓1）。 恶化站点：闪送侠-增城华商学院（↑7）、深圳优地-城市理工学院（↑2），需重点关注。 新增站点：广州优送达-机电职业技术学院（6单）、广州特牛-南方学院（5单）、广州松严-涉外经济职院（4单）、广州云闪送-松田职业学院（4单）。<br>
-      <strong>持续改善方向：</strong>闪送侠-增城华商学院恶化↑7单，主要问题：提前/虚假6单、超时8单、不满意1单，建议加强该站点运力调度与骑手管理。 深圳优地-城市理工学院恶化↑2单，主要问题：提前/虚假7单、超时1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（56单），主要分布在提前/虚假(30)、不满意(28)，需持续改善。
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">97</span>单（提前/虚假56、不满意45、未妥投1），<span class="station-compare worse">前日87单，↑10单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">27</span>单（提前/虚假14、超时12、不满意2），<span class="station-compare improve">前日42单，↓15单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">10</span>单（提前/虚假9、不满意1），<span class="station-compare worse">前日5单，↑5单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">9</span>单（提前/虚假3、超时3、不满意1、未妥投2），<span class="station-compare improve">前日13单，↓4单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">8</span>单（提前/虚假7、未妥投1），<span class="station-compare worse">前日5单，↑3单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">7</span>单（提前/虚假7），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假4、超时1、不满意1），<span class="station-compare flat">前日6单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">6</span>单（提前/虚假1、超时3、不满意1、未妥投1），<span class="station-compare improve">前日11单，↓5单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">5</span>单（提前/虚假4、不满意1），<span class="station-compare improve">前日12单，↓7单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">5</span>单（提前/虚假3、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共209单，较前日（232单）下降23单。 改善站点：厦门派得快-科教城站（↓15）、深圳优地-城市理工学院（↓7）、广州云闪送-松田职业学院（↓5）、广州晟丽-工程技术职业学院站（↓4）。 恶化站点：麻豆人-大学城站（↑10）、广州特牛-南方学院（↑5）、智安信息-花都广二师站（↑3），需重点关注。 新增站点：广州胜凯-水利水电站（7单）、广州易送达-金融学院校外站（5单）。<br>
+        <strong>持续改善方向：</strong>麻豆人-大学城站恶化↑10单，主要问题：提前/虚假56单、未妥投1单、不满意45单，建议加强该站点运力调度与骑手管理。 广州特牛-南方学院恶化↑5单，主要问题：提前/虚假9单、不满意1单，建议加强该站点运力调度与骑手管理。 智安信息-花都广二师站恶化↑3单，主要问题：提前/虚假7单、未妥投1单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（97单），主要分布在提前/虚假(56)、不满意(45)，需持续改善。
+      </div>
     </div>
   </div>
 
-  <div class="station-section">
-    <h2>5/17 站点达成明细（对比前日）</h2>
-    <div class="station-item">
-      <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">64</span>单（提前/虚假37、不满意26、未妥投1），<span class="station-compare worse">前日56单，↑8单，恶化</span>
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/11</span>
+        <span class="hdr-total">232单</span>
+        <span class="hdr-badge hdr-improve">-99</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">54</span>单（提前/虚假16、超时35、不满意3、未妥投2），<span class="station-compare worse">前日42单，↑12单，严重恶化</span>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">87</span>单（提前/虚假62、不满意27、未妥投2），<span class="station-compare improve">前日105单，↓18单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假27、超时10、不满意5），<span class="station-compare improve">前日128单，↓86单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">13</span>单（提前/虚假6、超时3、不满意2、未妥投3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">12</span>单（提前/虚假2、超时9、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假6、超时4、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">9</span>单（提前/虚假4、不满意5），<span class="station-compare worse">前日6单，↑3单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假3、超时3），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare improve">前日6单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">餐谋天下-白云文艺职业学院</span>，<span class="station-total">5</span>单（超时1、不满意1、未妥投3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共232单，较前日（331单）下降99单。 改善站点：厦门派得快-科教城站（↓86）、麻豆人-大学城站（↓18）、深圳优地-仲恺站（↓1）、智安信息-花都广二师站（↓1）。 恶化站点：广州松严-番禺职业技术学院（↑3），需重点关注。 新增站点：广州晟丽-工程技术职业学院站（13单）、深圳优地-城市理工学院（12单）、广州云闪送-松田职业学院（11单）、餐谋天下-白云文艺职业学院（5单）、广州特牛-南方学院（5单）。<br>
+        <strong>持续改善方向：</strong>广州松严-番禺职业技术学院恶化↑3单，主要问题：提前/虚假4单、不满意5单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（87单），主要分布在提前/虚假(62)、不满意(27)，需持续改善。
+      </div>
     </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-增城科教城大学城站</span>，<span class="station-total">32</span>单（超时32），<span class="station-compare improve">前日56单，↓24单，改善</span>
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #86efac;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/10</span>
+        <span class="hdr-total">331单</span>
+        <span class="hdr-badge hdr-improve">-6</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">12</span>单（提前/虚假10、不满意2），<span class="station-compare worse">前日4单，↑8单，恶化</span>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">128</span>单（提前/虚假58、超时56、不满意13、未妥投4），<span class="station-compare worse">前日108单，↑20单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">105</span>单（提前/虚假68、超时1、不满意35、未妥投5），<span class="station-compare improve">前日111单，↓6单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州荣榕-广科工贸站</span>，<span class="station-total">13</span>单（提前/虚假5、超时7、不满意1、未妥投1），<span class="station-compare worse">前日5单，↑8单，恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">8</span>单（提前/虚假3、不满意1、未妥投4），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州天河壬丰商圈</span>，<span class="station-total">7</span>单（提前/虚假7、不满意3），<span class="station-compare improve">前日11单，↓4单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">7</span>单（提前/虚假5、不满意2），<span class="station-compare improve">前日9单，↓2单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假2、不满意1、未妥投3），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州天河龙洞商圈</span>，<span class="station-total">6</span>单（提前/虚假2、不满意4），<span class="station-compare improve">前日7单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意2），<span class="station-compare flat">前日6单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">6</span>单（提前/虚假4、超时1、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共331单，较前日（337单）下降6单。 改善站点：麻豆人-大学城站（↓6）、广州天河壬丰商圈（↓4）、深圳优地-仲恺站（↓2）、智安信息-花都广二师站（↓1）、广州天河龙洞商圈（↓1）。 恶化站点：厦门派得快-科教城站（↑20）、广州荣榕-广科工贸站（↑8），需重点关注。 新增站点：广州易送达-金融学院校外站（8单）、闪送侠-增城华商学院（6单）。<br>
+        <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑20单，主要问题：提前/虚假58单、超时56单、未妥投4单、不满意13单，建议加强该站点运力调度与骑手管理。 广州荣榕-广科工贸站恶化↑8单，主要问题：提前/虚假5单、超时7单、未妥投1单、不满意1单，建议加强该站点运力调度与骑手管理。 头部站点厦门派得快-科教城站仍居高位（128单），主要分布在提前/虚假(58)、超时(56)、不满意(13)，需持续改善。
+      </div>
     </div>
-    <div class="station-item">
-      <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">6</span>单（提前/虚假2、超时4），<span class="station-compare worse">前日4单，↑2单，小幅恶化</span>
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/9</span>
+        <span class="hdr-total">337单</span>
+        <span class="hdr-badge hdr-improve">-301</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假4），<span class="station-compare improve">前日8单，↓4单，小幅改善</span>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">111</span>单（提前/虚假80、超时1、不满意33、未妥投4），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">108</span>单（提前/虚假32、超时61、不满意9、未妥投11），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州天河壬丰商圈</span>，<span class="station-total">11</span>单（提前/虚假8、超时1、不满意2），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">9</span>单（提前/虚假9），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">7</span>单（提前/虚假7），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州永乐-暨南大学番禺校区</span>，<span class="station-total">7</span>单（提前/虚假5、超时2），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州天河龙洞商圈</span>，<span class="station-total">7</span>单（提前/虚假4、不满意3），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州资进-岭南校内站</span>，<span class="station-total">6</span>单（提前/虚假2、超时4），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意2），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州荣榕-广科工贸站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共337单，较前日（638单）下降301单。<br>
+        <strong>持续改善方向：</strong>头部站点麻豆人-大学城站仍居高位（111单），主要分布在提前/虚假(80)、超时(1)、不满意(33)，需持续改善。
+      </div>
     </div>
-    <div class="station-item">
-      <span class="station-name">闪送侠-增城华商学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日14单，↓10单，改善</span>
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #dc2626;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/8</span>
+        <span class="hdr-total">638单</span>
+        <span class="hdr-badge hdr-worse">+532</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">3</span>单（提前/虚假3），<span class="station-compare new">前日无数据，新增</span>
+    <div class="station-content">
+      <div class="station-item" style="color:#6b7280;">该日期报表无骑手级数据，无法按站点拆分。当日总计638单。</div>
     </div>
-    <div class="station-item">
-      <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">3</span>单（提前/虚假2、不满意1），<span class="station-compare new">前日无数据，新增</span>
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/7</span>
+        <span class="hdr-total">106单</span>
+        <span class="hdr-badge hdr-improve">-33</span>
+      </div>
+      <span class="hdr-arrow"></span>
     </div>
-    <div class="station-item">
-      <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">2</span>单（提前/虚假1、不满意1），<span class="station-compare improve">前日6单，↓4单，小幅改善</span>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">21</span>单（提前/虚假13、不满意8），<span class="station-compare improve">前日22单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">12</span>单（提前/虚假6、超时3、不满意3），<span class="station-compare improve">前日29单，↓17单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假1、超时8、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">8</span>单（提前/虚假7、不满意1），<span class="station-compare worse">前日6单，↑2单，小幅恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">6</span>单（提前/虚假6），<span class="station-compare improve">前日15单，↓9单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">6</span>单（提前/虚假4、不满意3、未妥投1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">前日5单，持平</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-增城科教城大学城站</span>，<span class="station-total">3</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日22单，↓19单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-金融学院校外站</span>，<span class="station-total">3</span>单（提前/虚假3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共106单，较前日（139单）下降33单。 改善站点：广州晟丽-增城科教城大学城站（↓19）、厦门派得快-科教城站（↓17）、智安信息-花都广二师站（↓9）、麻豆人-大学城站（↓1）。 恶化站点：广州胜凯-水利水电站（↑2），需重点关注。 新增站点：广州云闪送-松田职业学院（11单）、广州松严-番禺职业技术学院（6单）、广州特牛-南方学院（6单）、广州易送达-金融学院校外站（3单）。<br>
+        <strong>持续改善方向：</strong>广州胜凯-水利水电站恶化↑2单，主要问题：提前/虚假7单、不满意1单，建议加强该站点运力调度与骑手管理。
+      </div>
     </div>
-    <div class="station-summary">
-      <strong>总结：</strong>当日共202单，较前日（174单）上升28单。 改善站点：广州晟丽-增城科教城大学城站（↓24）、闪送侠-增城华商学院（↓10）、深圳优地-城市理工学院（↓4）、广州优送达-机电职业技术学院（↓4）。 恶化站点：厦门派得快-科教城站（↑12）、麻豆人-大学城站（↑8）、深圳优地-仲恺站（↑8）、广州云闪送-松田职业学院（↑2），需重点关注。 新增站点：广州晟丽-工程技术职业学院站（3单）、广州松严-番禺职业技术学院（3单）。<br>
-      <strong>持续改善方向：</strong>厦门派得快-科教城站恶化↑12单，主要问题：提前/虚假16单、超时35单、未妥投2单、不满意3单，建议加强该站点运力调度与骑手管理。 麻豆人-大学城站恶化↑8单，主要问题：提前/虚假37单、未妥投1单、不满意26单，建议加强该站点运力调度与骑手管理。 深圳优地-仲恺站恶化↑8单，主要问题：提前/虚假10单、不满意2单，建议加强该站点运力调度与骑手管理。 头部站点麻豆人-大学城站仍居高位（64单），主要分布在提前/虚假(37)、不满意(26)，需持续改善。
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #16a34a;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/6</span>
+        <span class="hdr-total">139单</span>
+        <span class="hdr-badge hdr-improve">-93</span>
+      </div>
+      <span class="hdr-arrow"></span>
+    </div>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">29</span>单（提前/虚假10、超时13、未妥投6），<span class="station-compare improve">前日42单，↓13单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">22</span>单（提前/虚假13、不满意11），<span class="station-compare improve">前日87单，↓65单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">15</span>单（提前/虚假13、不满意3），<span class="station-compare worse">前日5单，↑10单，严重恶化</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州易送达-生态校内站</span>，<span class="station-total">14</span>单（超时13、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州胜凯-水利水电站</span>，<span class="station-total">6</span>单（提前/虚假3、超时2、不满意1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">集一-南洋站</span>，<span class="station-total">5</span>单（提前/虚假2、未妥投3），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">5</span>单（提前/虚假4、不满意1），<span class="station-compare improve">前日6单，↓1单，小幅改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">4</span>单（提前/虚假3、不满意1），<span class="station-compare improve">前日12单，↓8单，改善</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州优送达-机电职业技术学院</span>，<span class="station-total">4</span>单（提前/虚假2、超时1、不满意2），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-涉外经济职院</span>，<span class="station-total">4</span>单（提前/虚假3、超时1），<span class="station-compare new">前日无数据，新增</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共139单，较前日（232单）下降93单。 改善站点：麻豆人-大学城站（↓65）、厦门派得快-科教城站（↓13）、深圳优地-城市理工学院（↓8）、深圳优地-仲恺站（↓1）。 恶化站点：智安信息-花都广二师站（↑10），需重点关注。 新增站点：广州易送达-生态校内站（14单）、广州胜凯-水利水电站（6单）、集一-南洋站（5单）、广州优送达-机电职业技术学院（4单）、广州松严-涉外经济职院（4单）。<br>
+        <strong>持续改善方向：</strong>智安信息-花都广二师站恶化↑10单，主要问题：提前/虚假13单、不满意3单，建议加强该站点运力调度与骑手管理。
+      </div>
+    </div>
+  </div>
+
+  <div class="station-section" style="border-left:3px solid #d1d5db;">
+    <div class="station-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <div class="station-header-left">
+        <span class="hdr-date">5/5</span>
+        <span class="hdr-total">232单</span>
+        <span class="hdr-badge hdr-flat">首日</span>
+      </div>
+      <span class="hdr-arrow"></span>
+    </div>
+    <div class="station-content">
+      <div class="station-item">
+        <span class="station-name">麻豆人-大学城站</span>，<span class="station-total">87</span>单（提前/虚假62、不满意27、未妥投2），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">厦门派得快-科教城站</span>，<span class="station-total">42</span>单（提前/虚假27、超时10、不满意5），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州晟丽-工程技术职业学院站</span>，<span class="station-total">13</span>单（提前/虚假6、超时3、不满意2、未妥投3），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-城市理工学院</span>，<span class="station-total">12</span>单（提前/虚假2、超时9、不满意1），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州云闪送-松田职业学院</span>，<span class="station-total">11</span>单（提前/虚假6、超时4、不满意2），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州松严-番禺职业技术学院</span>，<span class="station-total">9</span>单（提前/虚假4、不满意5），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">深圳优地-仲恺站</span>，<span class="station-total">6</span>单（提前/虚假3、超时3），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">智安信息-花都广二师站</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">餐谋天下-白云文艺职业学院</span>，<span class="station-total">5</span>单（超时1、不满意1、未妥投3），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-item">
+        <span class="station-name">广州特牛-南方学院</span>，<span class="station-total">5</span>单（提前/虚假5），<span class="station-compare flat">首日数据</span>
+      </div>
+      <div class="station-summary">
+        <strong>总结：</strong>当日共232单。<br>
+        <strong>持续改善方向：</strong>头部站点麻豆人-大学城站仍居高位（87单），主要分布在提前/虚假(62)、不满意(27)，需持续改善。
+      </div>
     </div>
   </div>
 
@@ -651,10 +778,9 @@ data.forEach((d, i) => {
   </tr>`;
 });
 
-// Collapsible station sections (latest expanded, rest collapsed)
-document.querySelectorAll('.station-section').forEach((sec, i, all) => {
-  if (i < all.length - 1) sec.classList.add('collapsed');
-  sec.querySelector('h2').addEventListener('click', () => sec.classList.toggle('collapsed'));
+// Collapsible station sections (first=newest expanded, rest collapsed)
+document.querySelectorAll('.station-section').forEach((sec, i) => {
+  if (i > 0) sec.classList.add('collapsed');
 });
 </script>
 </body>
