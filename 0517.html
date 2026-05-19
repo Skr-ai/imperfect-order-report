@@ -213,9 +213,11 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
 <!-- 站点维度汇总 -->
 <div class="card">
-  <div class="card-title">站点维度汇总</div>
-  <div class="card-desc">各站点严重不完美订单分布，按总单倒序　·　<a href="javascript:void(0)" onclick="document.querySelector('[data-tab=rider]').click()" style="color:#007aff;text-decoration:none;font-weight:600">运单详情可在「站点明细」查看 →</a></div>
-  <div id="stationSummary" style="padding:4px 0"></div>
+  <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('stationBody'),a=document.getElementById('stationArrow');if(b.style.display==='none'){b.style.display='block';a.textContent='▲'}else{b.style.display='none';a.textContent='▼'}">
+    <span>站点维度汇总</span><span id="stationArrow" style="font-size:12px;color:#86868b">▲</span>
+  </div>
+  <div class="card-desc">各站点严重不完美订单分布，按总单倒序　·　<a href="javascript:void(0)" onclick="event.stopPropagation();document.querySelector('[data-tab=rider]').click()" style="color:#007aff;text-decoration:none;font-weight:600">运单详情可在「站点明细」查看 →</a></div>
+  <div id="stationBody"><div id="stationSummary" style="padding:4px 0"></div></div>
 </div>
 
 <!-- 判定口径分布 -->
@@ -336,7 +338,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <div class="tab-content" id="tab-rider">
 <div class="tab-panel">
   <div class="card-title" style="margin-bottom:4px">站点明细</div>
-  <div class="card-desc" style="margin-bottom:14px">按骑手聚合窄口径严重不完美订单，点击骑手后可查看该骑手的不完美订单详情</div>
+  <div class="card-desc" style="margin-bottom:14px">按骑手聚合窄口径严重不完美订单，点击骑手后可查看该骑手的不完美订单详情　·　<a href="javascript:void(0)" onclick="document.querySelector('[data-tab=overview]').click()" style="color:#007aff;text-decoration:none;font-weight:600">查看概览 →</a></div>
 
   <div class="filter-bar">
     <label>筛选:</label>
