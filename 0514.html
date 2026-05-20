@@ -437,7 +437,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div>
 </div>
 
-<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-20</div>
+<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-21</div>
 </div>
 
 <script>
@@ -675,13 +675,11 @@ new Chart(document.getElementById('chartPeriod'),{
     return {name:s,total:total,merchants:merchants};
   }).sort((a,b)=>b.total-a.total);
 
-  let html='<div class="detail-wrap" style="max-height:600px"><table id="tableStationMerchant" style="width:100%"><thead><tr>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',0)">站点名称 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',1)">商户数 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',2)">总单 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th>骑手(ID)</th>';
-  html+='<th>判定类型</th>';
-  html+='<th>商户列表（点击查看运单）</th>';
+  let html='<div class="detail-wrap" style="max-height:600px"><table id="tableStationMerchant" style="width:100%;min-width:800px"><thead><tr>';
+  html+='<th onclick="sortT(\'tableStationMerchant\',0)" style="width:260px">站点名称 <span class="sa">&#9650;&#9660;</span></th>';
+  html+='<th onclick="sortT(\'tableStationMerchant\',1)" style="width:60px">商户数 <span class="sa">&#9650;&#9660;</span></th>';
+  html+='<th onclick="sortT(\'tableStationMerchant\',2)" style="width:60px">总单 <span class="sa">&#9650;&#9660;</span></th>';
+  html+='<th>商户列表（点击查看运单明细）</th>';
   html+='</tr></thead><tbody>';
   stRows.forEach((row,si)=>{
     const riderSet={};const catSet={};
@@ -692,15 +690,16 @@ new Chart(document.getElementById('chartPeriod'),{
         (o.cat_labels||[]).forEach(l=>{catSet[l]=(catSet[l]||0)+1;});
       });
     });
-    const riderTags=Object.entries(riderSet).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([r,c])=>`<span style="display:inline-block;margin:1px 2px;padding:2px 6px;background:#f5f5f7;border-radius:4px;font-size:11px">${r}<b style="color:#007aff;margin-left:2px">${c}</b></span>`).join('');
-    const riderMore=Object.keys(riderSet).length>5?`<span style="font-size:10px;color:#86868b">+${Object.keys(riderSet).length-5}</span>`:'';
-    const catTags=Object.entries(catSet).sort((a,b)=>b[1]-a[1]).map(([l,c])=>{const cls=l==='超时'?'tag-yellow':l==='未妥投'?'tag-red':l==='不满意'?'tag-blue':'tag-purple';return `<span class="tag ${cls}">${l}(${c})</span>`;}).join(' ');
-    html+=`<tr><td data-val="${row.name}"><b class="stn-name" title="${row.name}">${row.name}</b></td><td data-val="${row.merchants.length}" style="text-align:center">${row.merchants.length}</td><td data-val="${row.total}" style="text-align:center"><b style="color:#ff3b30">${row.total}</b></td><td style="max-width:200px">${riderTags}${riderMore}</td><td class="cat-cell">${catTags||'-'}</td><td>`;
+    // Build inline summary under station name
+    const catInline=Object.entries(catSet).sort((a,b)=>b[1]-a[1]).map(([l,c])=>{const cls=l==='超时'?'tag-yellow':l==='未妥投'?'tag-red':l==='不满意'?'tag-blue':'tag-purple';return `<span class="tag ${cls}" style="font-size:10px;padding:1px 5px">${l}${c}</span>`;}).join(' ');
+    const topRiders=Object.entries(riderSet).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([r,c])=>`${r}<b style="color:#007aff">${c}</b>`).join('、');
+    const riderMore=Object.keys(riderSet).length>3?` <span style="color:#86868b">+${Object.keys(riderSet).length-3}人</span>`:'';
+    html+=`<tr><td data-val="${row.name}"><b class="stn-name" title="${row.name}">${row.name}</b><div style="margin-top:4px;font-size:11px;color:#86868b;line-height:1.6">${catInline}</div><div style="margin-top:2px;font-size:10px;color:#999;line-height:1.5">TOP骑手: ${topRiders}${riderMore}</div></td><td data-val="${row.merchants.length}" style="text-align:center">${row.merchants.length}</td><td data-val="${row.total}" style="text-align:center"><b style="color:#ff3b30">${row.total}</b></td><td>`;
     row.merchants.forEach(([m,orders],mi)=>{
       html+=`<a href="javascript:void(0)" class="merchant-tag" data-station="${si}" data-merchant="${mi}" style="display:inline-block;margin:2px 4px;padding:3px 10px;background:#f0f4ff;border:1px solid #d0d9ef;border-radius:8px;font-size:12px;color:#1d1d1f;cursor:pointer;text-decoration:none;transition:all .15s" onmouseover="this.style.background='#007aff';this.style.color='#fff'" onmouseout="this.style.background='#f0f4ff';this.style.color='#1d1d1f'">${m} <b style="color:#ff3b30">${orders.length}</b></a>`;
     });
     html+=`</td></tr>`;
-    html+=`<tr class="merchant-detail-row" id="merchantDetail_${si}" style="display:none"><td colspan="6" style="padding:0;background:#fafbfc"></td></tr>`;
+    html+=`<tr class="merchant-detail-row" id="merchantDetail_${si}" style="display:none"><td colspan="4" style="padding:0;background:#fafbfc"></td></tr>`;
   });
   html+='</tbody></table></div>';
   el.innerHTML=html;
