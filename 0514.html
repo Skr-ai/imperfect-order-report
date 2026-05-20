@@ -112,6 +112,10 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 .detail-wrap td.cat-cell,.cause-detail-inner td.cat-cell{white-space:normal;max-width:160px;line-height:1.8}
 .stn-name{display:inline-block;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;cursor:default}
 #riderDetailArea td.cat-cell{white-space:normal;max-width:160px;line-height:1.8}
+#riderDetailArea table{border-collapse:separate;border-spacing:0;width:100%}
+#riderDetailArea table th{padding:8px 10px;font-size:11px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap}
+#riderDetailArea table td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f0f0f2;vertical-align:middle}
+#riderDetailArea table tr:hover td{background:#f8faff}
 
 /* ===== Cause expand rows ===== */
 .cause-expand-row{cursor:pointer;transition:all .15s}
@@ -676,16 +680,30 @@ new Chart(document.getElementById('chartPeriod'),{
   html+='<th onclick="sortT(\'tableStationMerchant\',0)">站点名称 <span class="sa">&#9650;&#9660;</span></th>';
   html+='<th onclick="sortT(\'tableStationMerchant\',1)">商户数 <span class="sa">&#9650;&#9660;</span></th>';
   html+='<th onclick="sortT(\'tableStationMerchant\',2)">总单 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th>商户列表（点击商户查看运单）</th>';
+  html+='<th>骑手(ID)</th>';
+  html+='<th>判定类型</th>';
+  html+='<th>商户列表（点击查看运单）</th>';
   html+='</tr></thead><tbody>';
   stRows.forEach((row,si)=>{
-    html+=`<tr><td data-val="${row.name}"><b class="stn-name" title="${row.name}">${row.name}</b></td><td data-val="${row.merchants.length}" style="text-align:center">${row.merchants.length}</td><td data-val="${row.total}" style="text-align:center"><b style="color:#ff3b30">${row.total}</b></td><td>`;
+    // Collect unique riders and cat types for this station
+    const riderSet={};const catSet={};
+    row.merchants.forEach(([m,orders])=>{
+      orders.forEach(o=>{
+        const rk=`${o.riderName||'-'}(${o.riderId||'-'})`;
+        riderSet[rk]=(riderSet[rk]||0)+1;
+        (o.cat_labels||[]).forEach(l=>{catSet[l]=(catSet[l]||0)+1;});
+      });
+    });
+    const riderTags=Object.entries(riderSet).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([r,c])=>`<span style="display:inline-block;margin:1px 2px;padding:2px 6px;background:#f5f5f7;border-radius:4px;font-size:11px">${r}<b style="color:#007aff;margin-left:2px">${c}</b></span>`).join('');
+    const riderMore=Object.keys(riderSet).length>5?`<span style="font-size:10px;color:#86868b">+${Object.keys(riderSet).length-5}</span>`:'';
+    const catTags=Object.entries(catSet).sort((a,b)=>b[1]-a[1]).map(([l,c])=>{const cls=l==='超时'?'tag-yellow':l==='未妥投'?'tag-red':l==='不满意'?'tag-blue':'tag-purple';return `<span class="tag ${cls}">${l}(${c})</span>`;}).join(' ');
+    html+=`<tr><td data-val="${row.name}"><b class="stn-name" title="${row.name}">${row.name}</b></td><td data-val="${row.merchants.length}" style="text-align:center">${row.merchants.length}</td><td data-val="${row.total}" style="text-align:center"><b style="color:#ff3b30">${row.total}</b></td><td style="max-width:200px">${riderTags}${riderMore}</td><td class="cat-cell">${catTags||'-'}</td><td>`;
     row.merchants.forEach(([m,orders],mi)=>{
       html+=`<a href="javascript:void(0)" class="merchant-tag" data-station="${si}" data-merchant="${mi}" style="display:inline-block;margin:2px 4px;padding:3px 10px;background:#f0f4ff;border:1px solid #d0d9ef;border-radius:8px;font-size:12px;color:#1d1d1f;cursor:pointer;text-decoration:none;transition:all .15s" onmouseover="this.style.background='#007aff';this.style.color='#fff'" onmouseout="this.style.background='#f0f4ff';this.style.color='#1d1d1f'">${m} <b style="color:#ff3b30">${orders.length}</b></a>`;
     });
     html+=`</td></tr>`;
     // Hidden detail row for each station
-    html+=`<tr class="merchant-detail-row" id="merchantDetail_${si}" style="display:none"><td colspan="4" style="padding:0;background:#fafbfc"></td></tr>`;
+    html+=`<tr class="merchant-detail-row" id="merchantDetail_${si}" style="display:none"><td colspan="6" style="padding:0;background:#fafbfc"></td></tr>`;
   });
   html+='</tbody></table></div>';
   el.innerHTML=html;
@@ -1012,11 +1030,11 @@ const DATES=D.dates||[];
       Object.entries(r.causes).forEach(([c,n])=>{html+=`<span class="cause-tag ${causeClass(c)}" style="margin:2px">${c}: ${n}次</span> `;});
       html+=`</div>`;
     }
-    html+=`<table style="font-size:11px"><thead><tr><th>#</th><th>订单id</th><th>运单状态</th><th>商圈</th><th>运力线</th><th>团队</th><th>代理商</th><th>时段</th><th>商户</th><th>物流预测T时长(分)</th><th>判定类型</th><th>归因标签</th></tr></thead><tbody>`;
+    html+=`<table style="font-size:12px;border-collapse:separate;border-spacing:0;width:100%"><thead><tr><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">#</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">订单id</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">运单状态</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">商圈</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">运力线</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">团队</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">代理商</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">时段</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">商户</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">物流预测T时长(分)</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">判定类型</th><th style="padding:8px 10px;background:#f5f5f7;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap">归因标签</th></tr></thead><tbody>`;
     (r.orders||[]).forEach((o,oi)=>{
       const catH=(o.cat_labels||[]).map(l=>{const cls=l==='超时'?'tag-yellow':l==='未妥投'?'tag-red':l==='不满意'?'tag-blue':'tag-purple';return `<span class="tag ${cls}">${l}</span>`;}).join(' ');
       const causeH=(o.causes||[]).map(c=>`<span class="cause-tag ${causeClass(c)}">${c}</span>`).join(' ');
-      html+=`<tr><td>${oi+1}</td><td>${o['订单id']||'-'}</td><td>${o['运单状态']||'-'}</td><td>${(o['商圈名称']||'-').replace('广州','')}</td><td>${o['运力线']||'-'}</td><td>${o['团队名称']||'-'}</td><td>${o['代理商名称']||'-'}</td><td>${o['新时段']||'-'}</td><td>${o['商户名称']||'-'}</td><td>${o['实际T_m']||'-'}</td><td class="cat-cell">${catH||'-'}</td><td class="causes-cell">${causeH||'<span class="tag tag-gray">无</span>'}</td></tr>`;
+      html+=`<tr style="border-bottom:1px solid #f0f0f2"><td style="padding:8px 10px">${oi+1}</td><td style="padding:8px 10px">${o['订单id']||'-'}</td><td style="padding:8px 10px">${o['运单状态']||'-'}</td><td style="padding:8px 10px">${(o['商圈名称']||'-').replace('广州','')}</td><td style="padding:8px 10px">${o['运力线']||'-'}</td><td style="padding:8px 10px">${o['团队名称']||'-'}</td><td style="padding:8px 10px">${o['代理商名称']||'-'}</td><td style="padding:8px 10px">${o['新时段']||'-'}</td><td style="padding:8px 10px">${o['商户名称']||'-'}</td><td style="padding:8px 10px">${o['实际T_m']||'-'}</td><td class="cat-cell" style="padding:8px 10px">${catH||'-'}</td><td class="causes-cell" style="padding:8px 10px">${causeH||'<span class="tag tag-gray">无</span>'}</td></tr>`;
     });
     html+=`</tbody></table></div>`;
     area.innerHTML=html;
