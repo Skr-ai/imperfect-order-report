@@ -675,67 +675,62 @@ new Chart(document.getElementById('chartPeriod'),{
     return {name:s,total:total,merchants:merchants};
   }).sort((a,b)=>b.total-a.total);
 
-  let html='<div class="detail-wrap" style="max-height:600px"><table id="tableStationMerchant" style="width:100%;min-width:700px"><thead><tr>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',0)" style="width:240px">站点名称 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',1)" style="width:70px;text-align:center">商户数 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th onclick="sortT(\'tableStationMerchant\',2)" style="width:70px;text-align:center">总单 <span class="sa">&#9650;&#9660;</span></th>';
-  html+='<th>商户列表（点击查看运单明细）</th>';
-  html+='</tr></thead><tbody>';
+  let html='<div style="display:flex;flex-direction:column;gap:12px">';
   stRows.forEach((row,si)=>{
-    const riderSet={};const catSet={};
-    row.merchants.forEach(([m,orders])=>{
-      orders.forEach(o=>{
-        const rk=`${o.riderName||'-'}(${o.riderId||'-'})`;
-        riderSet[rk]=(riderSet[rk]||0)+1;
-        (o.cat_labels||[]).forEach(l=>{catSet[l]=(catSet[l]||0)+1;});
-      });
-    });
-    html+=`<tr><td data-val="${row.name}"><b class="stn-name" title="${row.name}">${row.name}</b></td><td data-val="${row.merchants.length}" style="text-align:center">${row.merchants.length}</td><td data-val="${row.total}" style="text-align:center"><b style="color:#ff3b30">${row.total}</b></td><td style="line-height:2">`;
+    html+=`<div class="st-merchant-card" data-station="${si}" style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;overflow:hidden">`;
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none" class="st-card-header" data-station="${si}">`;
+    html+=`<div style="display:flex;align-items:center;gap:12px"><b style="font-size:14px;color:#1d1d1f">${row.name}</b><span style="font-size:12px;color:#86868b">${row.merchants.length} 家商户</span></div>`;
+    html+=`<div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;font-weight:700;color:#ff3b30">${row.total}</span><span style="font-size:11px;color:#86868b">单</span><span class="st-arrow" style="font-size:12px;color:#86868b;transition:transform .2s">&#9660;</span></div>`;
+    html+=`</div>`;
+    html+=`<div class="st-card-body" data-station="${si}" style="display:none;padding:0 18px 16px;border-top:1px solid #f0f0f2">`;
+    html+=`<div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:14px">`;
     row.merchants.forEach(([m,orders],mi)=>{
-      html+=`<a href="javascript:void(0)" class="merchant-tag" data-station="${si}" data-merchant="${mi}" style="display:inline-block;margin:3px 4px;padding:4px 10px;background:#f0f4ff;border:1px solid #d0d9ef;border-radius:8px;font-size:12px;color:#1d1d1f;cursor:pointer;text-decoration:none;transition:background .15s,color .15s" onmouseover="this.style.background='#007aff';this.style.color='#fff'" onmouseout="this.style.background='#f0f4ff';this.style.color='#1d1d1f'">${m} <b style="color:#ff3b30">${orders.length}</b></a>`;
+      html+=`<a href="javascript:void(0)" class="merchant-tag" data-station="${si}" data-merchant="${mi}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#f5f7fa;border:1px solid #e8e8ed;border-radius:8px;font-size:13px;color:#1d1d1f;cursor:pointer;text-decoration:none;transition:all .15s" onmouseover="this.style.background='#007aff';this.style.borderColor='#007aff';this.style.color='#fff';this.querySelector('b').style.color='#fff'" onmouseout="this.style.background='#f5f7fa';this.style.borderColor='#e8e8ed';this.style.color='#1d1d1f';this.querySelector('b').style.color='#ff3b30'">${m}<b style="color:#ff3b30;font-size:12px">${orders.length}</b></a>`;
     });
-    html+=`</td></tr>`;
-    html+=`<tr class="merchant-detail-row" id="merchantDetail_${si}" style="display:none"><td colspan="4" style="padding:0;background:#fafbfc"></td></tr>`;
+    html+=`</div>`;
+    html+=`<div class="st-order-detail" data-station="${si}" style="margin-top:12px"></div>`;
+    html+=`</div></div>`;
   });
-  html+='</tbody></table></div>';
+  html+='</div>';
   el.innerHTML=html;
 
   window._stMerchantData=stRows;
 
+  // Toggle card expand/collapse
   el.addEventListener('click',function(e){
+    const header=e.target.closest('.st-card-header');
+    if(header&&!e.target.closest('.merchant-tag')){
+      const si=header.dataset.station;
+      const body=el.querySelector(`.st-card-body[data-station="${si}"]`);
+      const arrow=header.querySelector('.st-arrow');
+      if(body.style.display==='none'){body.style.display='block';arrow.style.transform='rotate(180deg)';}
+      else{body.style.display='none';arrow.style.transform='';}
+      return;
+    }
     const tag=e.target.closest('.merchant-tag');
     if(!tag)return;
     const si=parseInt(tag.dataset.station);
     const mi=parseInt(tag.dataset.merchant);
     const row=window._stMerchantData[si];
     const [mName,orders]=row.merchants[mi];
-    const detailRow=document.getElementById('merchantDetail_'+si);
-    if(!detailRow)return;
-    const cell=detailRow.querySelector('td');
-    if(detailRow.style.display!=='none'&&detailRow.dataset.activeMerchant===mi.toString()){
-      detailRow.style.display='none';
-      detailRow.dataset.activeMerchant='';
-      return;
+    const detailEl=el.querySelector(`.st-order-detail[data-station="${si}"]`);
+    if(!detailEl)return;
+    if(detailEl.dataset.activeMerchant===mi.toString()){
+      detailEl.innerHTML='';detailEl.dataset.activeMerchant='';return;
     }
-    detailRow.dataset.activeMerchant=mi.toString();
-    detailRow.style.display='';
-    let dh=`<div style="padding:14px 18px;max-height:400px;overflow:auto;background:#fafbfc">`;
+    detailEl.dataset.activeMerchant=mi.toString();
+    let dh=`<div style="background:#fafbfc;border-radius:8px;padding:14px;max-height:360px;overflow:auto">`;
     dh+=`<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#007aff">${mName} — ${orders.length} 单</div>`;
-    dh+=`<table style="width:100%;font-size:12px;border-collapse:separate;border-spacing:0"><thead><tr>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">#</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">订单id</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">骑手</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">骑手ID</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">时段</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">物流预测T(分)</th>`;
-    dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e0e0e0;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">判定类型</th>`;
+    dh+=`<table style="width:100%;font-size:12px;border-collapse:collapse"><thead><tr>`;
+    const ths=['#','订单ID','骑手','骑手ID','时段','物流预测T(分)','判定类型'];
+    ths.forEach(t=>{dh+=`<th style="padding:8px 10px;background:#fff;border-bottom:1.5px solid #e5e5ea;text-align:left;white-space:nowrap;font-size:11px;color:#86868b">${t}</th>`;});
     dh+=`</tr></thead><tbody>`;
     orders.forEach((o,oi)=>{
       const cats=(o.cat_labels||[]).map(l=>{const cls=l==='超时'?'tag-yellow':l==='未妥投'?'tag-red':l==='不满意'?'tag-blue':'tag-purple';return '<span class="tag '+cls+'">'+l+'</span>';}).join(' ');
       dh+=`<tr style="border-bottom:1px solid #f0f0f2"><td style="padding:7px 10px">${oi+1}</td><td style="padding:7px 10px;font-family:monospace;font-size:11px">${o['订单id']||'-'}</td><td style="padding:7px 10px">${o.riderName||'-'}</td><td style="padding:7px 10px;color:#86868b;font-size:11px">${o.riderId||'-'}</td><td style="padding:7px 10px">${o['新时段']||'-'}</td><td style="padding:7px 10px">${o['实际T_m']||'-'}</td><td style="padding:7px 10px" class="cat-cell">${cats||'-'}</td></tr>`;
     });
     dh+=`</tbody></table></div>`;
-    cell.innerHTML=dh;
+    detailEl.innerHTML=dh;
   });
 })();
 
