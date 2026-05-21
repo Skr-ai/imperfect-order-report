@@ -198,8 +198,8 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <!-- Main Tabs -->
 <div class="main-tabs" id="mainTabs">
   <div class="main-tab active" data-tab="overview">概览</div>
-  <div class="main-tab" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
-  <div class="main-tab" data-tab="org_feedback">归因标签 <span class="badge" id="badge-org">-</span></div>
+  <div class="main-tab" data-tab="rider">站点明细</div>
+  <div class="main-tab" data-tab="org_feedback">归因标签</div>
   <div class="main-tab" data-tab="review">复盘</div>
 </div>
 
@@ -454,7 +454,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div>
 </div>
 
-<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-21</div>
+<div class="footer">严重不完美订单分析报表（窄口径） · 自动生成于 2026-05-22</div>
 </div>
 
 <script>
@@ -830,7 +830,7 @@ const DATES=D.dates||[];
 (function(){
   const riders=D.by_rider||[];
   const badgeEl=document.getElementById('badge-rider');
-  if(badgeEl)badgeEl.textContent=D.rider_count||riders.length;
+  if(badgeEl)badgeEl.remove();
   const cntEl=document.getElementById('cnt_rider');
   if(cntEl)cntEl.textContent=riders.length;
 
@@ -1083,7 +1083,7 @@ const DATES=D.dates||[];
     return !caps.every(c=>c==='普众'||c==='-'||c==='大网-其他'||c==='');
   });
   const badgeOrg=document.getElementById('badge-org');
-  if(badgeOrg)badgeOrg.textContent=orgRiders.length;
+  if(badgeOrg)badgeOrg.remove();
 
   const teamMap={};
   orgRiders.forEach(r=>{
