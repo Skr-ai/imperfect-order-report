@@ -685,7 +685,7 @@ new Chart(document.getElementById('chartPeriod'),{
     html+=`</div>`;
     html+=`<div class="st-card-body" data-station="${si}" style="display:none;border-top:1px solid #f0f0f2">`;
     // Merchant list as clean rows
-    html+=`<div class="st-merchant-list" data-station="${si}">`;
+    html+=`<div class="st-merchant-list" data-station="${si}" style="max-height:320px;overflow-y:auto">`;
     row.merchants.forEach(([m,orders],mi)=>{
       const hidden=mi>=SHOW_LIMIT?' style="display:none"':'';
       html+=`<div class="merchant-row" data-station="${si}" data-merchant="${mi}"${hidden}>`;
