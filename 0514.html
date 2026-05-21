@@ -754,6 +754,7 @@ new Chart(document.getElementById('chartPeriod'),{
     });
     dh+=`</tbody></table></div>`;
     detailEl.innerHTML=dh;
+    setTimeout(()=>{detailEl.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
   });
 })();
 
