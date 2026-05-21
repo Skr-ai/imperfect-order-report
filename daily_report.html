@@ -25,12 +25,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .card .change { font-size: 12px; margin-top: 3px; }
 .card .change.up { color: #dc2626; }
 .card .change.down { color: #16a34a; }
-.section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.section h2 { font-size: 14px; color: #374151; margin-bottom: 14px; font-weight: 600; }
-.section.chart-dark { background: linear-gradient(180deg, #2d3e50 0%, #1f2d3d 60%, #1a2735 100%); padding: 22px 18px 14px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden; }
-.section.chart-dark::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 18% 22%, rgba(255,255,255,0.06) 0, rgba(255,255,255,0) 35%), radial-gradient(circle at 78% 30%, rgba(255,255,255,0.04) 0, rgba(255,255,255,0) 30%), radial-gradient(circle at 60% 70%, rgba(255,255,255,0.04) 0, rgba(255,255,255,0) 32%); pointer-events:none; }
-.section.chart-dark h2 { color: #e2e8f0; font-weight: 600; position: relative; z-index: 1; }
-.section.chart-dark .chart-container { position: relative; z-index: 1; }
+.section { background: white; border-radius: 12px; padding: 22px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #ededed; }
+.section h2 { font-size: 13px; color: #6b7280; margin-bottom: 6px; font-weight: 500; }
+.section .kpi-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.section .kpi-value { font-size: 30px; font-weight: 600; color: #1a1f36; letter-spacing: -0.5px; }
+.section .kpi-delta { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.section .kpi-delta.up { background: #ffeff0; color: #cd3d63; }
+.section .kpi-delta.down { background: #e6f8ed; color: #198a3f; }
+.section .legend-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.section .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+.section .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 .chart-container { position: relative; height: 240px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th { padding: 8px 10px; text-align: right; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; font-size: 12px; }
@@ -104,15 +108,35 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
     </div>
   </div>
 
-  <div class="section chart-dark">
-    <h2>不完美订单总量趋势</h2>
+  <div class="section">
+    <div class="kpi-row">
+      <div>
+        <h2>不完美订单总量</h2>
+        <div class="kpi-value">441 单</div>
+        <span class="kpi-delta up">↑ +235 (+114.1%) vs 前日</span>
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-dot" style="background:#635bff;"></span>本期 5/5–5/19</div>
+      </div>
+    </div>
     <div class="chart-container">
       <canvas id="totalChart"></canvas>
     </div>
   </div>
 
-  <div class="section chart-dark">
-    <h2>分类指标趋势</h2>
+  <div class="section">
+    <div class="kpi-row">
+      <div>
+        <h2>分类指标趋势</h2>
+        <div class="kpi-value" style="font-size:18px;color:#374151;">提前/虚假 · 超时 · 不满意 · 未妥投</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-dot" style="background:#635bff;"></span>提前/虚假</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#cd3d63;"></span>超时</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#f5a623;"></span>不满意</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#198a3f;"></span>未妥投</div>
+      </div>
+    </div>
     <div class="chart-container">
       <canvas id="categoryChart"></canvas>
     </div>
@@ -818,103 +842,115 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
 
 <script>
 const data = [{"date": "5/5", "total": 232, "timeout": 36, "noDeliver": 9, "earlyFake": 143, "unsatisfied": 50}, {"date": "5/6", "total": 139, "timeout": 36, "noDeliver": 12, "earlyFake": 72, "unsatisfied": 23}, {"date": "5/7", "total": 106, "timeout": 17, "noDeliver": 2, "earlyFake": 64, "unsatisfied": 27}, {"date": "5/8", "total": 638, "timeout": 58, "noDeliver": 85, "earlyFake": 390, "unsatisfied": 132}, {"date": "5/9", "total": 337, "timeout": 77, "noDeliver": 22, "earlyFake": 191, "unsatisfied": 59}, {"date": "5/10", "total": 331, "timeout": 71, "noDeliver": 23, "earlyFake": 180, "unsatisfied": 68}, {"date": "5/11", "total": 232, "timeout": 36, "noDeliver": 9, "earlyFake": 143, "unsatisfied": 50}, {"date": "5/12", "total": 209, "timeout": 24, "noDeliver": 8, "earlyFake": 124, "unsatisfied": 60}, {"date": "5/13", "total": 213, "timeout": 38, "noDeliver": 15, "earlyFake": 125, "unsatisfied": 41}, {"date": "5/14", "total": 346, "timeout": 56, "noDeliver": 15, "earlyFake": 206, "unsatisfied": 88}, {"date": "5/15", "total": 514, "timeout": 118, "noDeliver": 89, "earlyFake": 228, "unsatisfied": 95}, {"date": "5/16", "total": 236, "timeout": 57, "noDeliver": 7, "earlyFake": 115, "unsatisfied": 66}, {"date": "5/17", "total": 232, "timeout": 76, "noDeliver": 5, "earlyFake": 105, "unsatisfied": 52}, {"date": "5/18", "total": 206, "timeout": 31, "noDeliver": 9, "earlyFake": 110, "unsatisfied": 61}, {"date": "5/19", "total": 441, "timeout": 70, "noDeliver": 52, "earlyFake": 235, "unsatisfied": 104}];
-
 const labels = data.map(d => d.date);
 
-// Helper: build a vertical gradient from a base color to transparent
-function makeGradient(ctx, area, color) {
-  if (!area) return color;
+// Stripe-style vertical hover-line plugin
+const stripeHoverLine = {
+  id: 'stripeHoverLine',
+  afterDatasetsDraw(chart) {
+    const tt = chart.tooltip;
+    if (!tt || !tt.opacity) return;
+    const active = tt.getActiveElements();
+    if (!active.length) return;
+    const x = active[0].element.x;
+    const {top, bottom} = chart.chartArea;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(99, 91, 255, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.moveTo(x, top); ctx.lineTo(x, bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+function gradFill(ctx, area, rgb) {
+  if (!area) return `rgba(${rgb}, 0.05)`;
   const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
-  g.addColorStop(0, color.replace('ALPHA','0.55'));
-  g.addColorStop(0.55, color.replace('ALPHA','0.18'));
-  g.addColorStop(1, color.replace('ALPHA','0'));
+  g.addColorStop(0, `rgba(${rgb}, 0.16)`);
+  g.addColorStop(1, `rgba(${rgb}, 0)`);
   return g;
 }
 
-const MINT = '#5ee0a8';
-const MINT_RGBA = 'rgba(94, 224, 168, ALPHA)';
+const STRIPE_TT = {
+  backgroundColor: '#ffffff',
+  titleColor: '#1a1f36', bodyColor: '#1a1f36',
+  borderColor: '#e3e8ee', borderWidth: 1,
+  padding: 12, cornerRadius: 8,
+  displayColors: true, boxPadding: 6,
+  titleFont: { weight: '600', size: 12 },
+  bodyFont: { size: 13, weight: '500' }
+};
 
+const STRIPE_X = {
+  grid: { display: false, drawBorder: false },
+  border: { color: '#e3e8ee' },
+  ticks: { font: { size: 11 }, color: '#8a8f99', padding: 6, maxTicksLimit: 8 }
+};
+
+const STRIPE_Y = {
+  beginAtZero: true,
+  grid: { color: '#f0f1f4', drawBorder: false, drawTicks: false },
+  border: { display: false },
+  ticks: { font: { size: 11 }, color: '#8a8f99', padding: 8, maxTicksLimit: 5 }
+};
+
+// =================== Total chart (Stripe style) ===================
 new Chart(document.getElementById('totalChart'), {
   type: 'line',
   data: {
     labels,
     datasets: [{
+      label: '总单',
       data: data.map(d => d.total),
-      borderColor: MINT,
-      borderWidth: 3,
-      backgroundColor: (ctx) => makeGradient(ctx.chart.ctx, ctx.chart.chartArea, MINT_RGBA),
+      borderColor: '#635bff',
+      borderWidth: 2,
+      backgroundColor: ctx => gradFill(ctx.chart.ctx, ctx.chart.chartArea, '99, 91, 255'),
       fill: true,
-      tension: 0.45,
+      tension: 0.3,
       pointRadius: 0,
-      pointHoverRadius: 6,
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: MINT,
-      pointHoverBorderWidth: 3,
-      borderJoinStyle: 'round',
-      borderCapStyle: 'round'
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: '#ffffff',
+      pointHoverBorderColor: '#635bff',
+      pointHoverBorderWidth: 2.5,
+      borderJoinStyle: 'round'
     }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
-    layout: { padding: { top: 20, bottom: 6, left: 4, right: 4 } },
+    layout: { padding: { top: 8, bottom: 0, left: 0, right: 0 } },
     interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(15, 23, 42, 0.92)',
-        titleColor: '#e2e8f0', bodyColor: '#fff',
-        borderColor: 'rgba(94,224,168,0.3)', borderWidth: 1,
-        padding: 10, displayColors: false,
-        callbacks: { label: ctx => ctx.parsed.y + ' 单' }
+        ...STRIPE_TT,
+        displayColors: false,
+        callbacks: { title: c => c[0].label, label: c => c.parsed.y + ' 单' }
       }
     },
-    scales: {
-      y: {
-        display: false, beginAtZero: false,
-        grace: '15%'
-      },
-      x: {
-        grid: { display: false, drawBorder: false },
-        border: { display: false },
-        ticks: {
-          font: { size: 12, weight: '600' },
-          color: 'rgba(255,255,255,0.85)',
-          padding: 6
-        }
-      }
-    }
-  }
+    scales: { x: STRIPE_X, y: STRIPE_Y }
+  },
+  plugins: [stripeHoverLine]
 });
 
-const CAT_COLORS = {
-  earlyFake: '#fbbf24',
-  timeout:   '#f87171',
-  unsat:     '#c4b5fd',
-  noDeliver: '#60a5fa'
-};
-const CAT_RGBA = {
-  earlyFake: 'rgba(251, 191, 36, ALPHA)',
-  timeout:   'rgba(248, 113, 113, ALPHA)',
-  unsat:     'rgba(196, 181, 253, ALPHA)',
-  noDeliver: 'rgba(96, 165, 250, ALPHA)'
-};
-
-function buildCatDataset(label, key, colorKey, fillFlag) {
+// =================== Category chart (Stripe style) ===================
+function catDataset(label, key, color, rgb, withFill) {
   return {
     label,
     data: data.map(d => d[key]),
-    borderColor: CAT_COLORS[colorKey],
-    borderWidth: 2.4,
-    backgroundColor: fillFlag ? (ctx) => makeGradient(ctx.chart.ctx, ctx.chart.chartArea, CAT_RGBA[colorKey]) : 'transparent',
-    fill: fillFlag,
-    tension: 0.45,
+    borderColor: color,
+    borderWidth: 2,
+    backgroundColor: withFill ? (ctx => gradFill(ctx.chart.ctx, ctx.chart.chartArea, rgb)) : 'transparent',
+    fill: withFill,
+    tension: 0.3,
     pointRadius: 0,
     pointHoverRadius: 5,
-    pointHoverBackgroundColor: '#fff',
-    pointHoverBorderColor: CAT_COLORS[colorKey],
-    pointHoverBorderWidth: 2,
-    borderJoinStyle: 'round',
-    borderCapStyle: 'round'
+    pointHoverBackgroundColor: '#ffffff',
+    pointHoverBorderColor: color,
+    pointHoverBorderWidth: 2.5,
+    borderJoinStyle: 'round'
   };
 }
 
@@ -923,45 +959,30 @@ new Chart(document.getElementById('categoryChart'), {
   data: {
     labels,
     datasets: [
-      buildCatDataset('提前/虚假','earlyFake','earlyFake', true),
-      buildCatDataset('配送超时','timeout','timeout', false),
-      buildCatDataset('不满意','unsatisfied','unsat', false),
-      buildCatDataset('未妥投','noDeliver','noDeliver', false),
+      catDataset('提前/虚假', 'earlyFake', '#635bff', '99, 91, 255', true),
+      catDataset('配送超时', 'timeout', '#cd3d63', '205, 61, 99', false),
+      catDataset('不满意', 'unsatisfied', '#f5a623', '245, 166, 35', false),
+      catDataset('未妥投', 'noDeliver', '#198a3f', '25, 138, 63', false),
     ]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
-    layout: { padding: { top: 16, bottom: 6, left: 4, right: 4 } },
+    layout: { padding: { top: 8, bottom: 0, left: 0, right: 0 } },
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          boxWidth: 8, boxHeight: 8, usePointStyle: true, pointStyle: 'circle',
-          padding: 14, color: 'rgba(226,232,240,0.9)',
-          font: { size: 11 }
-        }
-      },
+      legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(15, 23, 42, 0.92)',
-        titleColor: '#e2e8f0', bodyColor: '#fff',
-        borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-        padding: 10, displayColors: true, boxPadding: 4
+        ...STRIPE_TT,
+        callbacks: {
+          title: c => c[0].label,
+          label: c => `${c.dataset.label}: ${c.parsed.y} 单`,
+          labelColor: c => ({ borderColor: c.dataset.borderColor, backgroundColor: c.dataset.borderColor, borderWidth: 0, borderRadius: 2 })
+        }
       }
     },
-    scales: {
-      y: { display: false, beginAtZero: true, grace: '10%' },
-      x: {
-        grid: { display: false, drawBorder: false },
-        border: { display: false },
-        ticks: {
-          font: { size: 12, weight: '600' },
-          color: 'rgba(255,255,255,0.85)',
-          padding: 6
-        }
-      }
-    }
-  }
+    scales: { x: STRIPE_X, y: STRIPE_Y }
+  },
+  plugins: [stripeHoverLine]
 });
 
 const tbody = document.getElementById('tableBody');
