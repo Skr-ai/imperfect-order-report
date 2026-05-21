@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>趋势图风格预览 - Apple Health vs Stripe Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f7;
+  padding: 40px 24px;
+  color: #1d1d1f;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+.page-header { text-align: center; margin-bottom: 36px; }
+.page-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.page-header p { color: #6b7280; font-size: 14px; }
+.preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .preview-grid { grid-template-columns: 1fr; } }
+
+.style-tag {
+  display: inline-block; padding: 4px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  margin-bottom: 10px; text-transform: uppercase;
+}
+
+/* ============ Apple Health style ============ */
+.health-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.health-card .style-tag { background: #fff1ec; color: #ff3b30; }
+.health-card .metric-label {
+  font-size: 13px; color: #8e8e93; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px;
+}
+.health-card .metric-value {
+  display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px;
+}
+.health-card .metric-value .num {
+  font-size: 38px; font-weight: 700; color: #1d1d1f; letter-spacing: -1px;
+}
+.health-card .metric-value .unit {
+  font-size: 16px; color: #8e8e93; font-weight: 500;
+}
+.health-card .metric-range {
+  font-size: 13px; color: #ff3b30; font-weight: 600; margin-bottom: 14px;
+}
+.health-card .chart-wrap { position: relative; height: 240px; }
+.health-card .x-tags {
+  display: flex; justify-content: space-between;
+  margin-top: 8px; padding: 0 4px;
+  font-size: 11px; color: #8e8e93; font-weight: 500;
+}
+
+/* ============ Stripe Dashboard style ============ */
+.stripe-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #ededed;
+}
+.stripe-card .style-tag { background: #f0eeff; color: #635bff; }
+.stripe-card .header-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 16px;
+}
+.stripe-card .header-left {}
+.stripe-card .stripe-title {
+  font-size: 13px; color: #6b7280; font-weight: 500; margin-bottom: 6px;
+}
+.stripe-card .stripe-value {
+  font-size: 30px; font-weight: 600; color: #1a1f36; letter-spacing: -0.5px;
+}
+.stripe-card .stripe-delta {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px; padding: 2px 8px; border-radius: 6px;
+  font-size: 12px; font-weight: 600;
+  background: #e6f8ed; color: #198a3f;
+}
+.stripe-card .stripe-delta.up { background: #ffeff0; color: #cd3d63; }
+.stripe-card .legend {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.stripe-card .legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: #6b7280;
+}
+.stripe-card .legend-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.stripe-card .chart-wrap { position: relative; height: 240px; }
+
+/* ============ Notes section ============ */
+.notes {
+  margin-top: 28px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+@media (max-width: 900px) { .notes { grid-template-columns: 1fr; } }
+.note-card {
+  background: white; border-radius: 12px; padding: 20px;
+  border: 1px solid #ededed;
+}
+.note-card h3 { font-size: 15px; margin-bottom: 12px; }
+.note-card ul { list-style: none; padding: 0; }
+.note-card li {
+  padding: 8px 0; font-size: 13px; color: #4b5563; line-height: 1.6;
+  border-bottom: 1px solid #f3f4f6;
+}
+.note-card li:last-child { border: 0; }
+.note-card li strong { color: #1d1d1f; }
+
+.footer { text-align: center; margin-top: 40px; color: #8e8e93; font-size: 12px; }
+.back-link { display: inline-block; margin-bottom: 24px; color: #635bff; text-decoration: none; font-size: 14px; }
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="daily_report.html" class="back-link">← 返回日报</a>
+  <div class="page-header">
+    <h1>趋势图风格预览 · 两种方案对比</h1>
+    <p>使用 5/5 - 5/19 的不完美订单总量数据 · 选你喜欢的我就把日报改成这个风格</p>
+  </div>
+
+  <div class="preview-grid">
+
+    <!-- ====== Apple Health 风格 ====== -->
+    <div class="health-card">
+      <div class="style-tag">Apple Health 风格</div>
+      <div class="metric-label">不完美订单总量</div>
+      <div class="metric-value">
+        <span class="num">441</span><span class="unit">单 · 5/19</span>
+      </div>
+      <div class="metric-range">范围 106 – 638 单</div>
+      <div class="chart-wrap">
+        <canvas id="healthChart"></canvas>
+      </div>
+    </div>
+
+    <!-- ====== Stripe Dashboard 风格 ====== -->
+    <div class="stripe-card">
+      <div class="style-tag">Stripe Dashboard 风格</div>
+      <div class="header-row">
+        <div class="header-left">
+          <div class="stripe-title">不完美订单总量</div>
+          <div class="stripe-value">441 单</div>
+          <span class="stripe-delta up">↑ +235 (+114.1%) vs 5/18</span>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#635bff;"></span>本期 5/5–5/19</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="stripeChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes">
+    <div class="note-card">
+      <h3>🍎 Apple Health 风格特点</h3>
+      <ul>
+        <li><strong>柔和曲线</strong>：高 tension(0.5) 平滑贝塞尔曲线，无数据点</li>
+        <li><strong>渐变填充</strong>：曲线下大面积彩色渐变（顶部60%透明 → 底部全透）</li>
+        <li><strong>极简坐标轴</strong>：完全隐藏 Y 轴和网格，X 轴只显示首/中/末 3 个日期</li>
+        <li><strong>大号数字</strong>：醒目大数值 + 灰色单位/范围说明</li>
+        <li><strong>主色调</strong>：单一品牌色（红/橙/绿），不混色</li>
+        <li><strong>用途</strong>：强调一个核心指标的整体走势和氛围感</li>
+      </ul>
+    </div>
+    <div class="note-card">
+      <h3>📊 Stripe Dashboard 风格特点</h3>
+      <ul>
+        <li><strong>克制线条</strong>：紫色 #635bff 细线（borderWidth 2），适度 tension(0.3)</li>
+        <li><strong>淡淡填充</strong>：极浅紫色背景填充（5%透明度）作为辅助</li>
+        <li><strong>悬停十字线</strong>：鼠标悬停显示垂直辅助线 + 高亮数据点 + 白底卡片 tooltip</li>
+        <li><strong>简洁网格</strong>：保留浅灰水平网格线和 Y 轴刻度，方便读数</li>
+        <li><strong>KPI 标题区</strong>：左上大号当前值 + 环比涨跌彩色徽章</li>
+        <li><strong>用途</strong>：业务/财务数据，重视精确读数和环比变化</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">数据来源：观星台 - 严重不完美订单报表 · 2026-05-21</div>
+</div>
+
+<script>
+const data = [
+  {date:"5/5",total:232},{date:"5/6",total:139},{date:"5/7",total:106},
+  {date:"5/8",total:638},{date:"5/9",total:337},{date:"5/10",total:331},
+  {date:"5/11",total:232},{date:"5/12",total:209},{date:"5/13",total:213},
+  {date:"5/14",total:346},{date:"5/15",total:514},{date:"5/16",total:236},
+  {date:"5/17",total:232},{date:"5/18",total:206},{date:"5/19",total:441}
+];
+const labels = data.map(d => d.date);
+const totals = data.map(d => d.total);
+
+// =================== Apple Health 风格 ===================
+new Chart(document.getElementById('healthChart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      data: totals,
+      borderColor: '#ff3b30',
+      borderWidth: 3,
+      backgroundColor: function(ctx) {
+        const chart = ctx.chart;
+        const {ctx: c, chartArea} = chart;
+        if (!chartArea) return '#ff3b30';
+        const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        g.addColorStop(0, 'rgba(255, 59, 48, 0.45)');
+        g.addColorStop(0.5, 'rgba(255, 99, 71, 0.18)');
+        g.addColorStop(1, 'rgba(255, 99, 71, 0)');
+        return g;
+      },
+      fill: true,
+      tension: 0.5,
+      pointRadius: 0,
+      pointHoverRadius: 6,
+      pointHoverBackgroundColor: '#ffffff',
+      pointHoverBorderColor: '#ff3b30',
+      pointHoverBorderWidth: 3,
+      borderJoinStyle: 'round',
+      borderCapStyle: 'round'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 12, bottom: 0, left: 4, right: 4 } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(28, 28, 30, 0.95)',
+        titleColor: '#ffffff', bodyColor: '#ffffff',
+        padding: 10, borderWidth: 0, displayColors: false,
+        callbacks: { label: c => c.parsed.y + ' 单' }
+      }
+    },
+    scales: {
+      y: { display: false, grace: '15%' },
+      x: {
+        grid: { display: false, drawBorder: false },
+        border: { display: false },
+        ticks: {
+          font: { size: 11 }, color: '#8e8e93',
+          callback: function(v, i) {
+            if (i === 0 || i === labels.length - 1 || i === Math.floor(labels.length / 2)) {
+              return labels[i];
+            }
+            return '';
+          },
+          autoSkip: false
+        }
+      }
+    }
+  }
+});
+
+// =================== Stripe Dashboard 风格 ===================
+
+// Custom plugin: vertical reference line on hover
+const stripeHoverLine = {
+  id: 'stripeHoverLine',
+  afterDatasetsDraw(chart) {
+    const tt = chart.tooltip;
+    if (!tt || !tt.opacity) return;
+    const active = tt.getActiveElements();
+    if (!active.length) return;
+    const x = active[0].element.x;
+    const {top, bottom} = chart.chartArea;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(99, 91, 255, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.moveTo(x, top); ctx.lineTo(x, bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+new Chart(document.getElementById('stripeChart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: '总单',
+      data: totals,
+      borderColor: '#635bff',
+      borderWidth: 2,
+      backgroundColor: function(ctx) {
+        const chart = ctx.chart;
+        const {ctx: c, chartArea} = chart;
+        if (!chartArea) return 'rgba(99, 91, 255, 0.05)';
+        const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        g.addColorStop(0, 'rgba(99, 91, 255, 0.12)');
+        g.addColorStop(1, 'rgba(99, 91, 255, 0)');
+        return g;
+      },
+      fill: true,
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: '#ffffff',
+      pointHoverBorderColor: '#635bff',
+      pointHoverBorderWidth: 2.5,
+      borderJoinStyle: 'round'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 8, bottom: 0, left: 0, right: 0 } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#ffffff',
+        titleColor: '#1a1f36', bodyColor: '#1a1f36',
+        borderColor: '#e3e8ee', borderWidth: 1,
+        padding: 12, cornerRadius: 8,
+        displayColors: false, titleFont: { weight: '600', size: 12 },
+        bodyFont: { size: 13, weight: '600' },
+        callbacks: {
+          title: c => c[0].label,
+          label: c => c.parsed.y + ' 单'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: '#f0f1f4', drawBorder: false, drawTicks: false },
+        border: { display: false },
+        ticks: {
+          font: { size: 11 }, color: '#8a8f99',
+          padding: 8, maxTicksLimit: 5
+        }
+      },
+      x: {
+        grid: { display: false, drawBorder: false },
+        border: { color: '#e3e8ee' },
+        ticks: {
+          font: { size: 11 }, color: '#8a8f99',
+          padding: 6, maxTicksLimit: 8
+        }
+      }
+    }
+  },
+  plugins: [stripeHoverLine]
+});
+</script>
+</body>
+</html>
