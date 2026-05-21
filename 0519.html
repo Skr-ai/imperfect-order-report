@@ -94,6 +94,9 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 /* ===== Progress bars ===== */
 .pct-bar{display:inline-block;height:6px;border-radius:3px;background:#007aff;min-width:3px;vertical-align:middle;margin-left:6px;opacity:.6;transition:width .3s ease}
 
+/* ===== Review pulse animation ===== */
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+
 /* ===== Tabs (Apple style pill) ===== */
 .main-tabs{display:flex;align-items:center;gap:0;margin-bottom:0;background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-radius:16px 16px 0 0;padding:6px 12px 0;position:sticky;top:56px;z-index:150;border-bottom:1px solid rgba(0,0,0,.06)}
 .main-tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;color:#86868b;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
@@ -200,7 +203,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
   <div class="main-tab active" data-tab="overview">概览</div>
   <div class="main-tab" data-tab="rider">站点明细</div>
   <div class="main-tab" data-tab="org_feedback">归因标签</div>
-  <div class="main-tab" data-tab="review">复盘</div>
+  <div class="main-tab" data-tab="review" style="position:relative"><span style="background:linear-gradient(135deg,#ff6b6b,#ee5a24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">复盘</span><span style="position:absolute;top:4px;right:-4px;width:7px;height:7px;background:#ff3b30;border-radius:50%;animation:pulse-dot 2s infinite"></span></div>
 </div>
 
 <!-- ====== TAB: 概览 ====== -->
@@ -441,15 +444,20 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <!-- ====== TAB: 复盘 ====== -->
 <div class="tab-content" id="tab-review">
 <div class="tab-panel">
-  <div class="card">
-    <div class="card-title" style="margin-bottom:4px">站点复盘</div>
-    <div class="card-desc" style="margin-bottom:14px">各站点今日不完美订单达成情况，填写原因与改善措施</div>
-    <div id="reviewContainer"></div>
-    <div style="margin-top:20px;display:flex;gap:12px">
-      <button id="btnExportReview" style="padding:10px 24px;background:#007aff;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s">导出复盘文字版</button>
-      <button id="btnClearReview" style="padding:10px 24px;background:#f2f2f7;color:#86868b;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s">清空填写内容</button>
+  <div class="card" style="border:none;background:transparent;padding:0">
+    <!-- Hero banner -->
+    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:14px;padding:28px 24px;margin-bottom:20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%"></div>
+      <div style="position:absolute;bottom:-30px;left:40%;width:140px;height:140px;background:rgba(255,255,255,.05);border-radius:50%"></div>
+      <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">站点复盘</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.8)">各站点今日不完美订单达成情况 · 填写原因与改善措施</div>
     </div>
-    <div id="reviewExportResult" style="display:none;margin-top:16px;background:#f9fafb;border:1px solid #e8e8ed;border-radius:10px;padding:16px;white-space:pre-wrap;font-size:13px;line-height:1.8;color:#1d1d1f;max-height:400px;overflow:auto"></div>
+    <div id="reviewContainer"></div>
+    <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+      <button id="btnExportReview" style="padding:12px 28px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(102,126,234,.35)" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(102,126,234,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(102,126,234,.35)'">导出复盘文字版</button>
+      <button id="btnClearReview" style="padding:12px 28px;background:#fff;color:#86868b;border:1px solid #e8e8ed;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#ff3b30';this.style.color='#ff3b30'" onmouseout="this.style.borderColor='#e8e8ed';this.style.color='#86868b'">清空填写内容</button>
+    </div>
+    <div id="reviewExportResult" style="display:none;margin-top:16px;background:#f9fafb;border:1px solid #e8e8ed;border-radius:12px;padding:18px;white-space:pre-wrap;font-size:13px;line-height:1.8;color:#1d1d1f;max-height:400px;overflow:auto"></div>
   </div>
 </div>
 </div>
@@ -1361,27 +1369,34 @@ async function _doExport(){
   const sorted=Object.entries(teams).sort((a,b)=>(b[1].total||0)-(a[1].total||0));
   if(!sorted.length){el.innerHTML='<div style="color:#86868b;font-size:13px">暂无站点数据</div>';return;}
 
-  let html='<div style="display:flex;flex-direction:column;gap:16px">';
+  // Color for left bar based on rank
+  const barColors=['#ff3b30','#ff6b6b','#ff9500','#ffb347','#007aff','#5ac8fa','#34c759','#86868b'];
+  let html='<div style="display:flex;flex-direction:column;gap:14px">';
   sorted.forEach(([name, data], idx)=>{
     const t=data.total||0,timeout=data.timeout||0,nd=data.no_deliver||0,ef=data.early_fake||0,unsat=data.unsat||0;
-    html+=`<div class="review-station-card" style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:18px 20px">`;
-    // Header: station name + KPI badges
-    html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">`;
-    html+=`<div style="font-size:14px;font-weight:700;color:#1d1d1f">${name}</div>`;
-    html+=`<div style="display:flex;gap:8px;flex-wrap:wrap">`;
-    html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#ffebee;color:#ff3b30">总${t}单</span>`;
-    if(timeout)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#fff8e1;color:#ff9500">超时${timeout}</span>`;
-    if(nd)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#e8f5e9;color:#34c759">未妥投${nd}</span>`;
-    if(ef)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#f3e5f5;color:#af52de">提前/虚假${ef}</span>`;
-    if(unsat)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#e3f2fd;color:#007aff">不满意${unsat}</span>`;
+    const barColor=barColors[Math.min(idx,barColors.length-1)];
+    html+=`<div class="review-station-card" style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:0;overflow:hidden;display:flex;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">`;
+    // Left color bar
+    html+=`<div style="width:5px;flex-shrink:0;background:${barColor}"></div>`;
+    html+=`<div style="flex:1;padding:16px 20px">`;
+    // Header row
+    html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">`;
+    html+=`<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:${barColor};color:#fff;font-size:11px;font-weight:700;flex-shrink:0">${idx+1}</span>`;
+    html+=`<span style="font-size:14px;font-weight:700;color:#1d1d1f;flex:1">${name}</span>`;
+    html+=`<div style="display:flex;gap:6px;flex-wrap:wrap">`;
+    html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#ff3b30;color:#fff">总${t}单</span>`;
+    if(timeout)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fff3e0;color:#e65100">超时${timeout}</span>`;
+    if(nd)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#e8f5e9;color:#2e7d32">未妥投${nd}</span>`;
+    if(ef)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#f3e5f5;color:#7b1fa2">提前/虚假${ef}</span>`;
+    if(unsat)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#e3f2fd;color:#1565c0">不满意${unsat}</span>`;
     html+=`</div></div>`;
-    // Input fields
-    html+=`<div style="display:flex;flex-direction:column;gap:10px">`;
-    html+=`<div><label style="font-size:12px;font-weight:600;color:#86868b;display:block;margin-bottom:4px">问题原因</label>`;
-    html+=`<textarea class="review-reason" data-station="${name}" rows="2" placeholder="填写该站点今日不完美订单的主要原因..." style="width:100%;padding:10px 12px;border:1px solid #e8e8ed;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .15s;font-family:inherit;line-height:1.5" onfocus="this.style.borderColor='#007aff'" onblur="this.style.borderColor='#e8e8ed'"></textarea></div>`;
-    html+=`<div><label style="font-size:12px;font-weight:600;color:#86868b;display:block;margin-bottom:4px">改善措施</label>`;
-    html+=`<textarea class="review-action" data-station="${name}" rows="2" placeholder="填写针对性改善措施..." style="width:100%;padding:10px 12px;border:1px solid #e8e8ed;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .15s;font-family:inherit;line-height:1.5" onfocus="this.style.borderColor='#007aff'" onblur="this.style.borderColor='#e8e8ed'"></textarea></div>`;
-    html+=`</div></div>`;
+    // Input fields with icons
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">`;
+    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px"><span style="color:#ff9500">⚠</span> 问题原因</label>`;
+    html+=`<textarea class="review-reason" data-station="${name}" rows="2" placeholder="今日主要问题原因..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#667eea';this.style.boxShadow='0 0 0 3px rgba(102,126,234,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
+    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px"><span style="color:#34c759">✓</span> 改善措施</label>`;
+    html+=`<textarea class="review-action" data-station="${name}" rows="2" placeholder="针对性改善方案..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#34c759';this.style.boxShadow='0 0 0 3px rgba(52,199,89,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
+    html+=`</div></div></div>`;
   });
   html+='</div>';
   el.innerHTML=html;
@@ -1412,7 +1427,7 @@ async function _doExport(){
       const orig=btn.textContent;
       btn.textContent='已复制到剪贴板 ✓';
       btn.style.background='#34c759';
-      setTimeout(()=>{btn.textContent=orig;btn.style.background='#007aff';},2000);
+      setTimeout(()=>{btn.textContent=orig;btn.style.background='linear-gradient(135deg,#667eea,#764ba2)';},2000);
     }).catch(()=>{});
   });
 
