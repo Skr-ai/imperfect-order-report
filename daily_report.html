@@ -27,6 +27,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .card .change.down { color: #16a34a; }
 .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 .section h2 { font-size: 14px; color: #374151; margin-bottom: 14px; font-weight: 600; }
+.section.chart-dark { background: linear-gradient(180deg, #2d3e50 0%, #1f2d3d 60%, #1a2735 100%); padding: 22px 18px 14px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden; }
+.section.chart-dark::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 18% 22%, rgba(255,255,255,0.06) 0, rgba(255,255,255,0) 35%), radial-gradient(circle at 78% 30%, rgba(255,255,255,0.04) 0, rgba(255,255,255,0) 30%), radial-gradient(circle at 60% 70%, rgba(255,255,255,0.04) 0, rgba(255,255,255,0) 32%); pointer-events:none; }
+.section.chart-dark h2 { color: #e2e8f0; font-weight: 600; position: relative; z-index: 1; }
+.section.chart-dark .chart-container { position: relative; z-index: 1; }
 .chart-container { position: relative; height: 240px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th { padding: 8px 10px; text-align: right; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; font-size: 12px; }
@@ -100,14 +104,14 @@ td:first-child { text-align: left; font-weight: 500; color: #374151; }
     </div>
   </div>
 
-  <div class="section">
+  <div class="section chart-dark">
     <h2>不完美订单总量趋势</h2>
     <div class="chart-container">
       <canvas id="totalChart"></canvas>
     </div>
   </div>
 
-  <div class="section">
+  <div class="section chart-dark">
     <h2>分类指标趋势</h2>
     <div class="chart-container">
       <canvas id="categoryChart"></canvas>
@@ -817,45 +821,145 @@ const data = [{"date": "5/5", "total": 232, "timeout": 36, "noDeliver": 9, "earl
 
 const labels = data.map(d => d.date);
 
+// Helper: build a vertical gradient from a base color to transparent
+function makeGradient(ctx, area, color) {
+  if (!area) return color;
+  const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
+  g.addColorStop(0, color.replace('ALPHA','0.55'));
+  g.addColorStop(0.55, color.replace('ALPHA','0.18'));
+  g.addColorStop(1, color.replace('ALPHA','0'));
+  return g;
+}
+
+const MINT = '#5ee0a8';
+const MINT_RGBA = 'rgba(94, 224, 168, ALPHA)';
+
 new Chart(document.getElementById('totalChart'), {
   type: 'line',
   data: {
     labels,
     datasets: [{
       data: data.map(d => d.total),
-      borderColor: '#dc2626',
-      backgroundColor: 'rgba(220, 38, 38, 0.04)',
-      fill: true, tension: 0.4, pointRadius: 4,
-      pointBackgroundColor: '#dc2626', pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 2
+      borderColor: MINT,
+      borderWidth: 3,
+      backgroundColor: (ctx) => makeGradient(ctx.chart.ctx, ctx.chart.chartArea, MINT_RGBA),
+      fill: true,
+      tension: 0.45,
+      pointRadius: 0,
+      pointHoverRadius: 6,
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: MINT,
+      pointHoverBorderWidth: 3,
+      borderJoinStyle: 'round',
+      borderCapStyle: 'round'
     }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' 单' } } },
+    layout: { padding: { top: 20, bottom: 6, left: 4, right: 4 } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(15, 23, 42, 0.92)',
+        titleColor: '#e2e8f0', bodyColor: '#fff',
+        borderColor: 'rgba(94,224,168,0.3)', borderWidth: 1,
+        padding: 10, displayColors: false,
+        callbacks: { label: ctx => ctx.parsed.y + ' 单' }
+      }
+    },
     scales: {
-      y: { beginAtZero: false, grid: { color: '#f3f4f6', drawBorder: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
-      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } }
+      y: {
+        display: false, beginAtZero: false,
+        grace: '15%'
+      },
+      x: {
+        grid: { display: false, drawBorder: false },
+        border: { display: false },
+        ticks: {
+          font: { size: 12, weight: '600' },
+          color: 'rgba(255,255,255,0.85)',
+          padding: 6
+        }
+      }
     }
   }
 });
+
+const CAT_COLORS = {
+  earlyFake: '#fbbf24',
+  timeout:   '#f87171',
+  unsat:     '#c4b5fd',
+  noDeliver: '#60a5fa'
+};
+const CAT_RGBA = {
+  earlyFake: 'rgba(251, 191, 36, ALPHA)',
+  timeout:   'rgba(248, 113, 113, ALPHA)',
+  unsat:     'rgba(196, 181, 253, ALPHA)',
+  noDeliver: 'rgba(96, 165, 250, ALPHA)'
+};
+
+function buildCatDataset(label, key, colorKey, fillFlag) {
+  return {
+    label,
+    data: data.map(d => d[key]),
+    borderColor: CAT_COLORS[colorKey],
+    borderWidth: 2.4,
+    backgroundColor: fillFlag ? (ctx) => makeGradient(ctx.chart.ctx, ctx.chart.chartArea, CAT_RGBA[colorKey]) : 'transparent',
+    fill: fillFlag,
+    tension: 0.45,
+    pointRadius: 0,
+    pointHoverRadius: 5,
+    pointHoverBackgroundColor: '#fff',
+    pointHoverBorderColor: CAT_COLORS[colorKey],
+    pointHoverBorderWidth: 2,
+    borderJoinStyle: 'round',
+    borderCapStyle: 'round'
+  };
+}
 
 new Chart(document.getElementById('categoryChart'), {
   type: 'line',
   data: {
     labels,
     datasets: [
-      { label: '提前/虚假', data: data.map(d => d.earlyFake), borderColor: '#f59e0b', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#f59e0b' },
-      { label: '配送超时', data: data.map(d => d.timeout), borderColor: '#dc2626', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#dc2626' },
-      { label: '不满意', data: data.map(d => d.unsatisfied), borderColor: '#7c3aed', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#7c3aed' },
-      { label: '未妥投', data: data.map(d => d.noDeliver), borderColor: '#2563eb', tension: 0.4, borderWidth: 1.5, pointRadius: 2.5, pointBackgroundColor: '#2563eb' },
+      buildCatDataset('提前/虚假','earlyFake','earlyFake', true),
+      buildCatDataset('配送超时','timeout','timeout', false),
+      buildCatDataset('不满意','unsatisfied','unsat', false),
+      buildCatDataset('未妥投','noDeliver','noDeliver', false),
     ]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 16, font: { size: 11 } } } },
+    layout: { padding: { top: 16, bottom: 6, left: 4, right: 4 } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          boxWidth: 8, boxHeight: 8, usePointStyle: true, pointStyle: 'circle',
+          padding: 14, color: 'rgba(226,232,240,0.9)',
+          font: { size: 11 }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(15, 23, 42, 0.92)',
+        titleColor: '#e2e8f0', bodyColor: '#fff',
+        borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+        padding: 10, displayColors: true, boxPadding: 4
+      }
+    },
     scales: {
-      y: { beginAtZero: true, grid: { color: '#f3f4f6', drawBorder: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } },
-      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af' } }
+      y: { display: false, beginAtZero: true, grace: '10%' },
+      x: {
+        grid: { display: false, drawBorder: false },
+        border: { display: false },
+        ticks: {
+          font: { size: 12, weight: '600' },
+          color: 'rgba(255,255,255,0.85)',
+          padding: 6
+        }
+      }
     }
   }
 });
