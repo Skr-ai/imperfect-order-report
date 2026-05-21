@@ -200,6 +200,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
   <div class="main-tab active" data-tab="overview">概览</div>
   <div class="main-tab" data-tab="rider">站点明细 <span class="badge" id="badge-rider">-</span></div>
   <div class="main-tab" data-tab="org_feedback">归因标签 <span class="badge" id="badge-org">-</span></div>
+  <div class="main-tab" data-tab="review">复盘</div>
 </div>
 
 <!-- ====== TAB: 概览 ====== -->
@@ -434,6 +435,22 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
     <span id="orgFilterInfo" style="font-size:12px;color:#007aff;font-weight:600;margin-left:auto;background:rgba(0,122,255,.06);padding:4px 12px;border-radius:8px"></span>
   </div>
   <div id="orgTeamContainer"></div>
+</div>
+</div>
+
+<!-- ====== TAB: 复盘 ====== -->
+<div class="tab-content" id="tab-review">
+<div class="tab-panel">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:4px">站点复盘</div>
+    <div class="card-desc" style="margin-bottom:14px">各站点今日不完美订单达成情况，填写原因与改善措施</div>
+    <div id="reviewContainer"></div>
+    <div style="margin-top:20px;display:flex;gap:12px">
+      <button id="btnExportReview" style="padding:10px 24px;background:#007aff;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s">导出复盘文字版</button>
+      <button id="btnClearReview" style="padding:10px 24px;background:#f2f2f7;color:#86868b;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s">清空填写内容</button>
+    </div>
+    <div id="reviewExportResult" style="display:none;margin-top:16px;background:#f9fafb;border:1px solid #e8e8ed;border-radius:10px;padding:16px;white-space:pre-wrap;font-size:13px;line-height:1.8;color:#1d1d1f;max-height:400px;overflow:auto"></div>
+  </div>
 </div>
 </div>
 
@@ -1336,6 +1353,76 @@ async function _doExport(){
   a.href=url;a.download='严重不完美订单分析_'+new Date().toISOString().slice(0,10)+'.xlsx';
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
+
+/* ===== 复盘 Tab ===== */
+(function(){
+  const el=document.getElementById('reviewContainer');if(!el)return;
+  const teams=D.by_team_name||{};
+  const sorted=Object.entries(teams).sort((a,b)=>(b[1].total||0)-(a[1].total||0));
+  if(!sorted.length){el.innerHTML='<div style="color:#86868b;font-size:13px">暂无站点数据</div>';return;}
+
+  let html='<div style="display:flex;flex-direction:column;gap:16px">';
+  sorted.forEach(([name, data], idx)=>{
+    const t=data.total||0,timeout=data.timeout||0,nd=data.no_deliver||0,ef=data.early_fake||0,unsat=data.unsat||0;
+    html+=`<div class="review-station-card" style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:18px 20px">`;
+    // Header: station name + KPI badges
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">`;
+    html+=`<div style="font-size:14px;font-weight:700;color:#1d1d1f">${name}</div>`;
+    html+=`<div style="display:flex;gap:8px;flex-wrap:wrap">`;
+    html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#ffebee;color:#ff3b30">总${t}单</span>`;
+    if(timeout)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#fff8e1;color:#ff9500">超时${timeout}</span>`;
+    if(nd)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#e8f5e9;color:#34c759">未妥投${nd}</span>`;
+    if(ef)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#f3e5f5;color:#af52de">提前/虚假${ef}</span>`;
+    if(unsat)html+=`<span style="padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:#e3f2fd;color:#007aff">不满意${unsat}</span>`;
+    html+=`</div></div>`;
+    // Input fields
+    html+=`<div style="display:flex;flex-direction:column;gap:10px">`;
+    html+=`<div><label style="font-size:12px;font-weight:600;color:#86868b;display:block;margin-bottom:4px">问题原因</label>`;
+    html+=`<textarea class="review-reason" data-station="${name}" rows="2" placeholder="填写该站点今日不完美订单的主要原因..." style="width:100%;padding:10px 12px;border:1px solid #e8e8ed;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .15s;font-family:inherit;line-height:1.5" onfocus="this.style.borderColor='#007aff'" onblur="this.style.borderColor='#e8e8ed'"></textarea></div>`;
+    html+=`<div><label style="font-size:12px;font-weight:600;color:#86868b;display:block;margin-bottom:4px">改善措施</label>`;
+    html+=`<textarea class="review-action" data-station="${name}" rows="2" placeholder="填写针对性改善措施..." style="width:100%;padding:10px 12px;border:1px solid #e8e8ed;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .15s;font-family:inherit;line-height:1.5" onfocus="this.style.borderColor='#007aff'" onblur="this.style.borderColor='#e8e8ed'"></textarea></div>`;
+    html+=`</div></div>`;
+  });
+  html+='</div>';
+  el.innerHTML=html;
+
+  // Export button
+  document.getElementById('btnExportReview').addEventListener('click',function(){
+    const result=document.getElementById('reviewExportResult');
+    let text=`【站点复盘】${D.dates&&D.dates[0]?D.dates[0]:''}\n\n`;
+    sorted.forEach(([name, data])=>{
+      const t=data.total||0,timeout=data.timeout||0,nd=data.no_deliver||0,ef=data.early_fake||0,unsat=data.unsat||0;
+      const reasonEl=el.querySelector(`.review-reason[data-station="${name}"]`);
+      const actionEl=el.querySelector(`.review-action[data-station="${name}"]`);
+      const reason=(reasonEl&&reasonEl.value.trim())||'（未填写）';
+      const action=(actionEl&&actionEl.value.trim())||'（未填写）';
+      text+=`${name}\n`;
+      text+=`达成：总${t}单`;
+      if(timeout)text+=`，超时${timeout}`;
+      if(nd)text+=`，未妥投${nd}`;
+      if(ef)text+=`，提前/虚假${ef}`;
+      if(unsat)text+=`，不满意${unsat}`;
+      text+=`\n原因：${reason}\n改善措施：${action}\n\n`;
+    });
+    result.style.display='block';
+    result.textContent=text;
+    // Copy to clipboard
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn=document.getElementById('btnExportReview');
+      const orig=btn.textContent;
+      btn.textContent='已复制到剪贴板 ✓';
+      btn.style.background='#34c759';
+      setTimeout(()=>{btn.textContent=orig;btn.style.background='#007aff';},2000);
+    }).catch(()=>{});
+  });
+
+  // Clear button
+  document.getElementById('btnClearReview').addEventListener('click',function(){
+    if(!confirm('确定清空所有填写内容？'))return;
+    el.querySelectorAll('textarea').forEach(ta=>ta.value='');
+    document.getElementById('reviewExportResult').style.display='none';
+  });
+})();
 </script>
 </body>
 </html>
