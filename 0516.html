@@ -452,6 +452,10 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
       <div style="position:absolute;bottom:-30px;left:40%;width:140px;height:140px;background:rgba(255,255,255,.05);border-radius:50%"></div>
       <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">站点复盘</div>
       <div style="font-size:13px;color:rgba(255,255,255,.8)">各站点今日不完美订单达成情况 · 填写原因与改善措施</div>
+      <div id="cloudSyncStatus" style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;font-size:12px;color:#fff;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)">
+        <span id="cloudSyncDot" style="width:8px;height:8px;border-radius:50%;background:#34c759;box-shadow:0 0 6px rgba(52,199,89,.7);animation:pulse-dot 2s infinite"></span>
+        <span id="cloudSyncText">云端同步 · 多人协作 · 实时共享</span>
+      </div>
     </div>
     <div id="reviewContainer"></div>
     <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
@@ -1370,6 +1374,78 @@ async function _doExport(){
   const sorted=Object.entries(teams).sort((a,b)=>(b[1].total||0)-(a[1].total||0));
   if(!sorted.length){el.innerHTML='<div style="color:#86868b;font-size:13px">暂无站点数据</div>';return;}
 
+  // ===== Cloud sync (JsonBlob) =====
+  const CLOUD_URL='https://jsonblob.com/api/jsonBlob/019e4f0b-12c9-7255-880c-307928dceb9a';
+  const REPORT_DATE=(D.dates&&D.dates[0])||'unknown';
+  let cloudData={reviews:{}};
+  let saveTimer=null;
+  let isFetching=false;
+  const syncDot=document.getElementById('cloudSyncDot');
+  const syncText=document.getElementById('cloudSyncText');
+  function setSync(state,msg){
+    if(!syncDot||!syncText)return;
+    const colors={ok:'#34c759',sync:'#ffd60a',err:'#ff453a'};
+    syncDot.style.background=colors[state]||'#86868b';
+    syncDot.style.boxShadow=`0 0 6px ${colors[state]||'#86868b'}aa`;
+    syncText.textContent=msg;
+  }
+  async function fetchCloud(silent){
+    if(isFetching)return;
+    isFetching=true;
+    if(!silent)setSync('sync','正在加载云端数据…');
+    try{
+      const r=await fetch(CLOUD_URL,{cache:'no-store',headers:{'Accept':'application/json'}});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      cloudData=await r.json();
+      if(!cloudData.reviews)cloudData.reviews={};
+      // Populate textareas for current date
+      const dateData=cloudData.reviews[REPORT_DATE]||{};
+      el.querySelectorAll('textarea').forEach(ta=>{
+        const st=ta.getAttribute('data-station');
+        const field=ta.classList.contains('review-reason')?'reason':'improvement';
+        const v=(dateData[st]&&dateData[st][field])||'';
+        // Only update if user is not currently editing this field
+        if(document.activeElement!==ta && ta.value!==v) ta.value=v;
+      });
+      setSync('ok','已同步 · '+new Date().toLocaleTimeString('zh-CN',{hour12:false}));
+    }catch(e){
+      setSync('err','同步失败：'+e.message);
+    }finally{isFetching=false;}
+  }
+  async function saveCloud(){
+    setSync('sync','正在保存…');
+    try{
+      // Re-fetch first to merge concurrent edits
+      const r=await fetch(CLOUD_URL,{cache:'no-store',headers:{'Accept':'application/json'}});
+      if(r.ok){
+        const latest=await r.json();
+        if(latest&&latest.reviews)cloudData=latest;
+        if(!cloudData.reviews)cloudData.reviews={};
+      }
+      // Build current date data from DOM
+      const cur={};
+      el.querySelectorAll('.review-station-card').forEach(card=>{
+        const reasonEl=card.querySelector('.review-reason');
+        const actionEl=card.querySelector('.review-action');
+        if(!reasonEl)return;
+        const st=reasonEl.getAttribute('data-station');
+        cur[st]={reason:reasonEl.value||'',improvement:actionEl?actionEl.value:''};
+      });
+      cloudData.reviews[REPORT_DATE]=cur;
+      const pr=await fetch(CLOUD_URL,{method:'PUT',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(cloudData)});
+      if(!pr.ok)throw new Error('HTTP '+pr.status);
+      setSync('ok','已保存 · '+new Date().toLocaleTimeString('zh-CN',{hour12:false}));
+    }catch(e){
+      setSync('err','保存失败：'+e.message+'（稍后自动重试）');
+      setTimeout(saveCloud,5000);
+    }
+  }
+  function scheduleSave(){
+    if(saveTimer)clearTimeout(saveTimer);
+    setSync('sync','输入中…');
+    saveTimer=setTimeout(saveCloud,1200);
+  }
+
   // Color for left bar based on rank
   const barColors=['#ff3b30','#ff6b6b','#ff9500','#ffb347','#007aff','#5ac8fa','#34c759','#86868b'];
   let html='<div style="display:flex;flex-direction:column;gap:14px">';
@@ -1401,6 +1477,19 @@ async function _doExport(){
   });
   html+='</div>';
   el.innerHTML=html;
+
+  // Bind input events for auto-save
+  el.querySelectorAll('textarea').forEach(ta=>{
+    ta.addEventListener('input',scheduleSave);
+  });
+
+  // Initial load + polling
+  fetchCloud(false);
+  setInterval(()=>fetchCloud(true),30000);
+  // Refresh when tab becomes visible
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden)fetchCloud(true);
+  });
 
   // Export button
   document.getElementById('btnExportReview').addEventListener('click',function(){
@@ -1434,9 +1523,10 @@ async function _doExport(){
 
   // Clear button
   document.getElementById('btnClearReview').addEventListener('click',function(){
-    if(!confirm('确定清空所有填写内容？'))return;
+    if(!confirm('确定清空所有填写内容？此操作会同步删除云端数据'))return;
     el.querySelectorAll('textarea').forEach(ta=>ta.value='');
     document.getElementById('reviewExportResult').style.display='none';
+    scheduleSave();
   });
 })();
 </script>
