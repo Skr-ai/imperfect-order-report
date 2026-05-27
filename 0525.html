@@ -1534,12 +1534,12 @@ async function _doExport(){
     if(ef)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#f3e5f5;color:#7b1fa2">提前/虚假${ef}</span>`;
     if(unsat)html+=`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#e3f2fd;color:#1565c0">不满意${unsat}</span>`;
     html+=`</div></div>`;
-    // Input fields - full width stacked layout
-    html+=`<div style="display:flex;flex-direction:column;gap:10px">`;
-    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;letter-spacing:.3px"><span style="color:#ff9500">⚠</span> 问题原因</label>`;
-    html+=`<textarea class="review-reason" data-station="${name}" rows="3" placeholder="今日主要问题原因..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#667eea';this.style.boxShadow='0 0 0 3px rgba(102,126,234,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
-    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;letter-spacing:.3px"><span style="color:#34c759">✓</span> 改善措施</label>`;
-    html+=`<textarea class="review-action" data-station="${name}" rows="3" placeholder="针对性改善方案..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#34c759';this.style.boxShadow='0 0 0 3px rgba(52,199,89,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
+    // Input fields with icons
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">`;
+    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px"><span style="color:#ff9500">⚠</span> 问题原因</label>`;
+    html+=`<textarea class="review-reason" data-station="${name}" rows="2" placeholder="今日主要问题原因..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#667eea';this.style.boxShadow='0 0 0 3px rgba(102,126,234,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
+    html+=`<div><label style="font-size:11px;font-weight:700;color:#86868b;display:flex;align-items:center;gap:4px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px"><span style="color:#34c759">✓</span> 改善措施</label>`;
+    html+=`<textarea class="review-action" data-station="${name}" rows="2" placeholder="针对性改善方案..." style="width:100%;padding:10px 12px;border:1.5px solid #f0f0f2;border-radius:8px;font-size:13px;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;line-height:1.5;background:#fafbfc" onfocus="this.style.borderColor='#34c759';this.style.boxShadow='0 0 0 3px rgba(52,199,89,.1)'" onblur="this.style.borderColor='#f0f0f2';this.style.boxShadow=''"></textarea></div>`;
     html+=`</div></div></div>`;
   });
   html+='</div>';
