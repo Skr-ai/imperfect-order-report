@@ -533,8 +533,8 @@ function contactsBadge(name){
   const same=r.contact&&r.manager&&r.contact===r.manager;
   if(same) return ` <span class="sc-tag" style="display:inline-block;padding:2px 8px;border-radius:10px;background:#eef2ff;color:#4338ca;font-size:11px;font-weight:600;margin-left:6px">@${r.contact}</span>`;
   let s='';
-  if(r.contact) s+=` <span class="sc-tag" title="商对接人" style="display:inline-block;padding:2px 8px;border-radius:10px;background:#eef2ff;color:#4338ca;font-size:11px;font-weight:600;margin-left:6px">商:@${r.contact}</span>`;
-  if(r.manager) s+=` <span class="sc-tag" title="后台盯盘站长" style="display:inline-block;padding:2px 8px;border-radius:10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:600;margin-left:4px">盯:@${r.manager}</span>`;
+  if(r.contact) s+=` <span class="sc-tag" style="display:inline-block;padding:2px 8px;border-radius:10px;background:#eef2ff;color:#4338ca;font-size:11px;font-weight:600;margin-left:6px">@${r.contact}</span>`;
+  if(r.manager) s+=` <span class="sc-tag" style="display:inline-block;padding:2px 8px;border-radius:10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:600;margin-left:4px">@${r.manager}</span>`;
   return s;
 }
 function contactsText(name){
@@ -542,8 +542,8 @@ function contactsText(name){
   if(!r||(!r.contact&&!r.manager))return '';
   if(r.contact&&r.manager&&r.contact===r.manager) return ' @'+r.contact;
   const a=[];
-  if(r.contact) a.push('商:@'+r.contact);
-  if(r.manager) a.push('盯:@'+r.manager);
+  if(r.contact) a.push('@'+r.contact);
+  if(r.manager) a.push('@'+r.manager);
   return ' '+a.join(' ');
 }
 document.getElementById('kv-total').textContent=N;
