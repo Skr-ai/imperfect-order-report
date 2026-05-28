@@ -445,8 +445,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
   <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
     <input id="ocSearch" type="text" placeholder="搜索订单ID/骑手/站点/对接人..." style="flex:1;min-width:240px;padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;outline:none" oninput="ocRender()">
-    <input id="ocSite" list="ocSiteList" placeholder="搜索站点..." style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:240px;outline:none" oninput="ocRender()">
-    <datalist id="ocSiteList"></datalist>
+    <input id="ocSite" type="text" placeholder="搜索站点..." style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:280px;outline:none" oninput="ocRender()">
     <select id="ocPeriod" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:120px" onchange="ocRender()"><option value="">全部时段</option></select>
     <select id="ocContact" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部对接人</option></select>
     <select id="ocManager" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部站长</option></select>
@@ -1176,15 +1175,12 @@ const DATES=D.dates||[];
   const elS=document.getElementById('ocStatSites');
 
   // Populate dropdowns
-  const sites=[...new Set(allOrders.map(o=>o.site).filter(v=>v&&v!=='-'))].sort();
   const periods=[...new Set(allOrders.map(o=>o.period).filter(v=>v&&v!=='-'))].sort();
   const contacts=[...new Set(allOrders.map(o=>o.contact).filter(v=>v))].sort();
   const managers=[...new Set(allOrders.map(o=>o.manager).filter(v=>v))].sort();
-  const ocSiteList=document.getElementById('ocSiteList');
   const ocPeriod=document.getElementById('ocPeriod');
   const ocContact=document.getElementById('ocContact');
   const ocManager=document.getElementById('ocManager');
-  if(ocSiteList)sites.forEach(s=>{const o=document.createElement('option');o.value=s;ocSiteList.appendChild(o);});
   if(ocPeriod)periods.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocPeriod.appendChild(o);});
   if(ocContact)contacts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocContact.appendChild(o);});
   if(ocManager)managers.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocManager.appendChild(o);});
