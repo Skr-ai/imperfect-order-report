@@ -26,17 +26,20 @@
   .toolbar .btn.secondary { background: #f5f5f7; color: #1d1d1f; border: 1px solid #d2d2d7; }
   .count { margin-left: auto; color: #6e6e73; font-size: 13px; }
   .table-wrap { background: #fff; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); border: 1px solid #ededed; overflow: hidden; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
   thead th { background: #fafafa; font-weight: 600; padding: 12px 14px; text-align: left; color: #424245; border-bottom: 1px solid #ededed; cursor: pointer; user-select: none; white-space: nowrap; position: sticky; top: 0; z-index: 1; }
   thead th:hover { color: #635bff; }
   thead th .arrow { color: #c5c5c7; font-size: 11px; margin-left: 4px; }
   thead th.sort-asc .arrow, thead th.sort-desc .arrow { color: #635bff; }
-  tbody td { padding: 11px 14px; border-bottom: 1px solid #f3f3f5; vertical-align: middle; }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid #f3f3f5; vertical-align: middle; color: #1d1d1f; font-weight: 500; }
   tbody tr:hover { background: #fafafa; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; margin-right: 4px; white-space: nowrap; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-right: 4px; white-space: nowrap; }
   .b-biz { background: #eef2ff; color: #4338ca; }
   .b-mon { background: #fef3c7; color: #92400e; }
   .order-id { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; font-weight: 700; color: #1d1d1f; letter-spacing: 0.2px; }
+  .col-rider { font-weight: 600; }
+  .col-station { font-weight: 500; color: #1d1d1f; }
+  .col-period { font-weight: 600; color: #4338ca; }
   .empty { text-align: center; padding: 40px; color: #6e6e73; }
   .pager { display: flex; justify-content: center; gap: 6px; padding: 14px; align-items: center; flex-wrap: wrap; }
   .pager button { padding: 6px 12px; border: 1px solid #d2d2d7; background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; }
@@ -171,11 +174,11 @@ function render() {
       const mon = d.monitor ? `<span class="badge b-mon">@${d.monitor}</span>` : '<span style="color:#c5c5c7">-</span>';
       return `<tr>
         <td><span class="order-id">${d.order_id}</span></td>
-        <td>${d.rider || '-'}</td>
-        <td>${d.station || '-'}</td>
+        <td class="col-rider">${d.rider || '-'}</td>
+        <td class="col-station">${d.station || '-'}</td>
         <td>${biz}</td>
         <td>${mon}</td>
-        <td>${d.period || '-'}</td>
+        <td class="col-period">${d.period || '-'}</td>
       </tr>`;
     }).join('');
   }
