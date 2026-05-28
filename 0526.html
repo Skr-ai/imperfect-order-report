@@ -445,7 +445,8 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
   <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
     <input id="ocSearch" type="text" placeholder="搜索订单ID/骑手/站点/对接人..." style="flex:1;min-width:240px;padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;outline:none" oninput="ocRender()">
-    <select id="ocSite" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:200px" onchange="ocRender()"><option value="">全部站点</option></select>
+    <input id="ocSite" list="ocSiteList" placeholder="搜索站点..." style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:240px;outline:none" oninput="ocRender()">
+    <datalist id="ocSiteList"></datalist>
     <select id="ocPeriod" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:120px" onchange="ocRender()"><option value="">全部时段</option></select>
     <select id="ocContact" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部对接人</option></select>
     <select id="ocManager" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部站长</option></select>
@@ -1169,23 +1170,21 @@ const DATES=D.dates||[];
     });
   });
 
-  // Stats
-  const uniqRiders=new Set(allOrders.map(o=>o.rider).filter(v=>v&&v!=='-'));
-  const uniqSites=new Set(allOrders.map(o=>o.site).filter(v=>v&&v!=='-'));
-  const elT=document.getElementById('ocStatTotal');if(elT)elT.textContent=allOrders.length;
-  const elR=document.getElementById('ocStatRiders');if(elR)elR.textContent=uniqRiders.size;
-  const elS=document.getElementById('ocStatSites');if(elS)elS.textContent=uniqSites.size;
+  // Stats (initial all)
+  const elT=document.getElementById('ocStatTotal');
+  const elR=document.getElementById('ocStatRiders');
+  const elS=document.getElementById('ocStatSites');
 
   // Populate dropdowns
   const sites=[...new Set(allOrders.map(o=>o.site).filter(v=>v&&v!=='-'))].sort();
   const periods=[...new Set(allOrders.map(o=>o.period).filter(v=>v&&v!=='-'))].sort();
   const contacts=[...new Set(allOrders.map(o=>o.contact).filter(v=>v))].sort();
   const managers=[...new Set(allOrders.map(o=>o.manager).filter(v=>v))].sort();
-  const ocSite=document.getElementById('ocSite');
+  const ocSiteList=document.getElementById('ocSiteList');
   const ocPeriod=document.getElementById('ocPeriod');
   const ocContact=document.getElementById('ocContact');
   const ocManager=document.getElementById('ocManager');
-  if(ocSite)sites.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocSite.appendChild(o);});
+  if(ocSiteList)sites.forEach(s=>{const o=document.createElement('option');o.value=s;ocSiteList.appendChild(o);});
   if(ocPeriod)periods.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocPeriod.appendChild(o);});
   if(ocContact)contacts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocContact.appendChild(o);});
   if(ocManager)managers.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocManager.appendChild(o);});
@@ -1194,12 +1193,13 @@ const DATES=D.dates||[];
 
   function getFiltered(){
     const kw=(document.getElementById('ocSearch')?.value||'').trim().toLowerCase();
-    const fSite=document.getElementById('ocSite')?.value||'';
+    const fSiteRaw=(document.getElementById('ocSite')?.value||'').trim();
+    const fSite=fSiteRaw.toLowerCase();
     const fPeriod=document.getElementById('ocPeriod')?.value||'';
     const fContact=document.getElementById('ocContact')?.value||'';
     const fManager=document.getElementById('ocManager')?.value||'';
     return allOrders.filter(o=>{
-      if(fSite && o.site!==fSite)return false;
+      if(fSite && !(o.site||'').toLowerCase().includes(fSite))return false;
       if(fPeriod && o.period!==fPeriod)return false;
       if(fContact && o.contact!==fContact)return false;
       if(fManager && o.manager!==fManager)return false;
@@ -1226,6 +1226,14 @@ const DATES=D.dates||[];
   window.ocRender=function(){
     const filtered=sortRows(getFiltered());
     const total=filtered.length;
+
+    // Update stat cards based on filtered data
+    const fRiders=new Set(filtered.map(o=>o.rider).filter(v=>v&&v!=='-'));
+    const fSites=new Set(filtered.map(o=>o.site).filter(v=>v&&v!=='-'));
+    if(elT)elT.textContent=total;
+    if(elR)elR.textContent=fRiders.size;
+    if(elS)elS.textContent=fSites.size;
+
     const totalPages=Math.max(1,Math.ceil(total/pageSize));
     if(page>totalPages)page=totalPages;
     if(page<1)page=1;
