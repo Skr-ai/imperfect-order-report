@@ -1322,133 +1322,104 @@ const DATES=D.dates||[];
     try{
       const wb=new ExcelJS.Workbook();
       wb.creator='严重不完美订单分析';wb.created=new Date();
-      const ws=wb.addWorksheet('逐单盘点',{views:[{state:'frozen',ySplit:5}]});
+      const ws=wb.addWorksheet('逐单盘点',{views:[{state:'frozen',ySplit:1}]});
 
       const C={
-        brand:'635BFF', brandSoft:'EEF0FF',
+        headerBg:'F4F4F7', headerFg:'1D1D1F',
         purple:'7E3FF2', purpleBg:'F3EBFE',
         amber:'B45309', amberBg:'FEF3DC',
-        headerBg:'1D1D1F', headerFg:'FFFFFF',
-        altRow:'FAFAFC', borderClr:'E8E8ED',
-        muted:'86868B', text:'1D1D1F'
+        brand:'635BFF',
+        altRow:'FBFBFD', borderClr:'E8E8ED',
+        muted:'9CA0A8', text:'1D1D1F'
       };
       const thin={style:'thin',color:{argb:'FF'+C.borderClr}};
       const border={top:thin,bottom:thin,left:thin,right:thin};
-      const yaHei='Microsoft YaHei';
+      const FONT='宋体';
 
-      // ----- Title -----
-      ws.mergeCells('A1:F1');
-      const tCell=ws.getCell('A1');
-      tCell.value='逐单盘点 · '+(DATES[0]||'');
-      tCell.font={bold:true,size:18,color:{argb:'FF1D1D1F'},name:yaHei};
-      tCell.alignment={vertical:'middle',horizontal:'left'};
-      tCell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.brandSoft}};
-      ws.getRow(1).height=38;
-
-      // ----- Subtitle / counts -----
-      ws.mergeCells('A2:F2');
-      const sCell=ws.getCell('A2');
-      const fRiders=new Set(rows.map(o=>o.rider).filter(v=>v&&v!=='-'));
-      const fSites=new Set(rows.map(o=>o.site).filter(v=>v&&v!=='-'));
-      sCell.value=`订单总数 ${rows.length}  |  骑手数 ${fRiders.size}  |  站点数 ${fSites.size}  |  导出时间 ${new Date().toLocaleString('zh-CN')}`;
-      sCell.font={size:11,color:{argb:'FF'+C.muted},name:yaHei};
-      sCell.alignment={vertical:'middle',horizontal:'left'};
-      ws.getRow(2).height=22;
-
-      // ----- Filter summary row -----
-      ws.mergeCells('A3:F3');
-      const fCell=ws.getCell('A3');
-      const filters=[];
-      const kw=(document.getElementById('ocSearch')?.value||'').trim();
-      if(kw)filters.push('搜索:'+kw);
-      if(ocSelectedSite)filters.push('站点:'+ocSelectedSite);
-      const fp=document.getElementById('ocPeriod')?.value;if(fp)filters.push('时段:'+fp);
-      const fc=document.getElementById('ocContact')?.value;if(fc)filters.push('对接人:'+fc);
-      const fm=document.getElementById('ocManager')?.value;if(fm)filters.push('站长:'+fm);
-      fCell.value=filters.length?('筛选条件: '+filters.join(' · ')):'筛选条件: 全部';
-      fCell.font={size:10,italic:true,color:{argb:'FF635BFF'},name:yaHei};
-      fCell.alignment={vertical:'middle',horizontal:'left'};
-      ws.getRow(3).height=20;
-
-      // ----- Empty spacer -----
-      ws.getRow(4).height=6;
-
-      // ----- Header row (row 5) -----
+      // ----- Header row (row 1) -----
       const headers=['订单ID','骑手姓名','站点名称','对接人','站长','时段'];
       const hr=ws.addRow(headers);
-      hr.height=30;
+      hr.height=32;
       hr.eachCell({includeEmpty:true},(cell)=>{
-        cell.font={bold:true,size:12,color:{argb:'FF'+C.headerFg},name:yaHei};
+        cell.font={bold:true,size:12,color:{argb:'FF'+C.headerFg},name:FONT};
         cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.headerBg}};
         cell.alignment={vertical:'middle',horizontal:'center'};
-        cell.border=border;
+        cell.border={
+          top:{style:'medium',color:{argb:'FF'+C.text}},
+          bottom:{style:'medium',color:{argb:'FF'+C.text}},
+          left:thin,right:thin
+        };
       });
 
       // ----- Data rows -----
       rows.forEach((o,i)=>{
         const r=ws.addRow([o.id||'',o.rider||'',o.site||'',o.contact||'',o.manager||'',o.period||'']);
-        r.height=24;
+        r.height=26;
         const isAlt=(i%2===1);
-        r.eachCell({includeEmpty:true},(cell,colNum)=>{
-          cell.font={size:11,color:{argb:'FF'+C.text},name:yaHei};
+        r.eachCell({includeEmpty:true},(cell)=>{
+          cell.font={size:11,color:{argb:'FF'+C.text},name:FONT};
           cell.border=border;
-          cell.alignment={vertical:'middle',horizontal:'left',wrapText:false};
+          cell.alignment={vertical:'middle',horizontal:'left'};
           if(isAlt)cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.altRow}};
         });
-        // Order ID: monospace-look + bold
+        // Order ID
         const c1=r.getCell(1);
-        c1.font={bold:true,size:11,name:'Consolas',color:{argb:'FF'+C.text}};
-        // Rider: bold
+        c1.font={bold:true,size:11,color:{argb:'FF'+C.text},name:FONT};
+        c1.alignment={vertical:'middle',horizontal:'center'};
+        // Rider
         const c2=r.getCell(2);
-        c2.font={bold:true,size:11,color:{argb:'FF'+C.text},name:yaHei};
-        // Contact badge style (purple)
+        c2.font={bold:true,size:11,color:{argb:'FF'+C.text},name:FONT};
+        c2.alignment={vertical:'middle',horizontal:'center'};
+        // Site
+        const c3=r.getCell(3);
+        c3.alignment={vertical:'middle',horizontal:'left',indent:1};
+        // Contact (purple badge)
         const c4=r.getCell(4);
         if(o.contact){
           c4.value='@'+o.contact;
-          c4.font={bold:true,size:11,color:{argb:'FF'+C.purple},name:yaHei};
+          c4.font={bold:true,size:11,color:{argb:'FF'+C.purple},name:FONT};
           c4.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.purpleBg}};
           c4.alignment={vertical:'middle',horizontal:'center'};
         }else{
-          c4.value='-';
-          c4.font={size:11,color:{argb:'FFC8C8CD'},name:yaHei};
+          c4.value='—';
+          c4.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};
           c4.alignment={vertical:'middle',horizontal:'center'};
         }
-        // Manager badge (amber)
+        // Manager (amber badge)
         const c5=r.getCell(5);
         if(o.manager){
           c5.value='@'+o.manager;
-          c5.font={bold:true,size:11,color:{argb:'FF'+C.amber},name:yaHei};
+          c5.font={bold:true,size:11,color:{argb:'FF'+C.amber},name:FONT};
           c5.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.amberBg}};
           c5.alignment={vertical:'middle',horizontal:'center'};
         }else{
-          c5.value='-';
-          c5.font={size:11,color:{argb:'FFC8C8CD'},name:yaHei};
+          c5.value='—';
+          c5.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};
           c5.alignment={vertical:'middle',horizontal:'center'};
         }
-        // Period: brand purple
+        // Period
         const c6=r.getCell(6);
         if(o.period&&o.period!=='-'){
-          c6.font={bold:true,size:11,color:{argb:'FF'+C.brand},name:yaHei};
+          c6.font={bold:true,size:11,color:{argb:'FF'+C.brand},name:FONT};
           c6.alignment={vertical:'middle',horizontal:'center'};
         }else{
-          c6.value='-';
-          c6.font={size:11,color:{argb:'FFC8C8CD'},name:yaHei};
+          c6.value='—';
+          c6.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};
           c6.alignment={vertical:'middle',horizontal:'center'};
         }
       });
 
       // ----- Column widths -----
-      ws.getColumn(1).width=24; // id
-      ws.getColumn(2).width=14; // rider
-      ws.getColumn(3).width=42; // site
-      ws.getColumn(4).width=14; // contact
-      ws.getColumn(5).width=14; // manager
-      ws.getColumn(6).width=12; // period
+      ws.getColumn(1).width=26;
+      ws.getColumn(2).width=14;
+      ws.getColumn(3).width=44;
+      ws.getColumn(4).width=14;
+      ws.getColumn(5).width=14;
+      ws.getColumn(6).width=12;
 
-      // ----- AutoFilter on header row -----
-      ws.autoFilter={from:{row:5,column:1},to:{row:5,column:6}};
+      // AutoFilter on header
+      ws.autoFilter={from:{row:1,column:1},to:{row:1,column:6}};
 
-      // ----- Output -----
       const buf=await wb.xlsx.writeBuffer();
       const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const url=URL.createObjectURL(blob);
