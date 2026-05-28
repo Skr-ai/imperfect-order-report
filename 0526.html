@@ -198,7 +198,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <div class="main-tabs" id="mainTabs">
   <div class="main-tab active" data-tab="overview">概览</div>
   <div class="main-tab" data-tab="rider">站点明细</div>
-  <div class="main-tab" data-tab="org_feedback" style="position:relative">逐单盘点<span style="position:absolute;top:4px;right:-4px;width:7px;height:7px;background:#ff3b30;border-radius:50%;animation:pulse-dot 2s infinite"></span></div>
+  <div class="main-tab" data-tab="org_feedback" style="position:relative"><span style="background:linear-gradient(135deg,#ff6b6b,#ee5a24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">逐单盘点</span><span style="position:absolute;top:4px;right:-4px;width:7px;height:7px;background:#ff3b30;border-radius:50%;animation:pulse-dot 2s infinite"></span></div>
   <div class="main-tab" data-tab="review" style="position:relative"><span style="background:linear-gradient(135deg,#ff6b6b,#ee5a24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">复盘</span><span style="position:absolute;top:4px;right:-4px;width:7px;height:7px;background:#ff3b30;border-radius:50%;animation:pulse-dot 2s infinite"></span></div>
 </div>
 </div>
@@ -445,10 +445,10 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 
   <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
     <input id="ocSearch" type="text" placeholder="搜索订单ID/骑手/站点/对接人..." style="flex:1;min-width:240px;padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;outline:none" oninput="ocRender()">
-    <div style="position:relative;min-width:280px">
-      <input id="ocSite" type="text" placeholder="搜索/选择站点..." autocomplete="off" style="width:100%;padding:8px 36px 8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;outline:none;cursor:text" oninput="ocSiteFilter()" onfocus="ocSiteOpen()" onblur="setTimeout(ocSiteClose,200)">
-      <span onclick="document.getElementById('ocSite').focus();ocSiteOpen()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#86868b;font-size:11px;cursor:pointer;pointer-events:auto">▼</span>
-      <div id="ocSiteDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1px solid #e8e8ed;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);max-height:280px;overflow-y:auto;z-index:50"></div>
+    <div class="combo-wrap" id="ocSiteComboWrap" style="min-width:220px">
+      <input id="ocSite" type="text" placeholder="搜索/选择团队..." autocomplete="off" style="width:220px;padding:8px 28px 8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;outline:none">
+      <span class="combo-arrow" id="ocSiteComboArrow">&#9660;</span>
+      <div class="combo-list" id="ocSiteComboList"></div>
     </div>
     <select id="ocPeriod" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:120px" onchange="ocRender()"><option value="">全部时段</option></select>
     <select id="ocContact" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部对接人</option></select>
@@ -1190,32 +1190,64 @@ const DATES=D.dates||[];
   if(ocContact)contacts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocContact.appendChild(o);});
   if(ocManager)managers.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocManager.appendChild(o);});
 
-  // Site dropdown helpers
-  function renderSiteList(kw){
-    const dd=document.getElementById('ocSiteDropdown');if(!dd)return;
-    const k=(kw||'').trim().toLowerCase();
-    const list=k?sites.filter(s=>s.toLowerCase().includes(k)):sites;
-    if(!list.length){dd.innerHTML='<div style="padding:14px 16px;color:#86868b;font-size:13px;text-align:center">无匹配站点</div>';return;}
-    dd.innerHTML='<div style="padding:8px 16px;background:#fafafa;color:#86868b;font-size:11px;font-weight:600;border-bottom:1px solid #f0f0f2;position:sticky;top:0">共 '+list.length+' 个站点 · 点击选择</div>'
-      +'<div onmousedown="ocSitePick(\'\')" style="padding:10px 16px;cursor:pointer;font-size:13px;color:#635bff;font-weight:600;border-bottom:1px solid #f0f0f2" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'\'">▸ 全部站点</div>'
-      +list.map(s=>'<div onmousedown="ocSitePick('+JSON.stringify(s).replace(/"/g,'&quot;')+')" style="padding:10px 16px;cursor:pointer;font-size:13px;color:#1d1d1f;border-bottom:1px solid #f7f7f9" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'\'">'+s+'</div>').join('');
+  // Site combo (matches Rider tab style)
+  const ocSiteWrap=document.getElementById('ocSiteComboWrap');
+  const ocSiteInput=document.getElementById('ocSite');
+  const ocSiteList=document.getElementById('ocSiteComboList');
+  const ocSiteArrow=document.getElementById('ocSiteComboArrow');
+  let ocSelectedSite='';
+  function ocSiteOpenCombo(){if(ocSiteWrap)ocSiteWrap.classList.add('open');}
+  function ocSiteCloseCombo(){if(ocSiteWrap)ocSiteWrap.classList.remove('open');}
+  function ocSiteIsOpen(){return ocSiteWrap&&ocSiteWrap.classList.contains('open');}
+  function ocSiteRenderItems(filter){
+    if(!ocSiteList)return;
+    ocSiteList.innerHTML='';
+    const kw=(filter||'').toLowerCase();
+    ocMkSiteItem('','全部团队',kw);
+    sites.forEach(t=>ocMkSiteItem(t,t,kw));
   }
-  window.ocSiteOpen=function(){const dd=document.getElementById('ocSiteDropdown');if(!dd)return;renderSiteList(document.getElementById('ocSite').value);dd.style.display='block';};
-  window.ocSiteClose=function(){const dd=document.getElementById('ocSiteDropdown');if(dd)dd.style.display='none';};
-  window.ocSiteFilter=function(){renderSiteList(document.getElementById('ocSite').value);ocRender();};
-  window.ocSitePick=function(s){document.getElementById('ocSite').value=s;ocSiteClose();ocRender();};
+  function ocMkSiteItem(val,label,kw){
+    if(kw&&val&&!val.toLowerCase().includes(kw))return;
+    const div=document.createElement('div');
+    div.className='combo-item'+(val===ocSelectedSite?' active':'');
+    div.textContent=label;
+    div.dataset.val=val;
+    div.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      ocSelectedSite=this.dataset.val;
+      ocSiteInput.value=ocSelectedSite;
+      ocSiteCloseCombo();
+      ocRender();
+    });
+    ocSiteList.appendChild(div);
+  }
+  if(ocSiteInput){
+    ocSiteInput.addEventListener('click',function(){this.value='';ocSiteRenderItems('');ocSiteOpenCombo();});
+    ocSiteInput.addEventListener('focus',function(){this.value='';ocSiteRenderItems('');ocSiteOpenCombo();});
+    ocSiteInput.addEventListener('input',function(){ocSiteRenderItems(this.value);if(!ocSiteIsOpen())ocSiteOpenCombo();});
+    ocSiteInput.addEventListener('blur',function(){setTimeout(function(){ocSiteInput.value=ocSelectedSite;ocSiteCloseCombo();},200);});
+  }
+  if(ocSiteArrow){
+    ocSiteArrow.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      if(ocSiteIsOpen()){ocSiteCloseCombo();ocSiteInput.value=ocSelectedSite;}
+      else{ocSiteInput.value='';ocSiteInput.focus();ocSiteRenderItems('');ocSiteOpenCombo();}
+    });
+  }
+  document.addEventListener('click',function(e){
+    if(ocSiteWrap&&!ocSiteWrap.contains(e.target)){ocSiteInput.value=ocSelectedSite;ocSiteCloseCombo();}
+  });
 
   let sortKey='', sortDir=1, page=1, pageSize=50;
 
   function getFiltered(){
     const kw=(document.getElementById('ocSearch')?.value||'').trim().toLowerCase();
-    const fSiteRaw=(document.getElementById('ocSite')?.value||'').trim();
-    const fSite=fSiteRaw.toLowerCase();
+    const fSite=ocSelectedSite||'';
     const fPeriod=document.getElementById('ocPeriod')?.value||'';
     const fContact=document.getElementById('ocContact')?.value||'';
     const fManager=document.getElementById('ocManager')?.value||'';
     return allOrders.filter(o=>{
-      if(fSite && !(o.site||'').toLowerCase().includes(fSite))return false;
+      if(fSite && o.site!==fSite)return false;
       if(fPeriod && o.period!==fPeriod)return false;
       if(fContact && o.contact!==fContact)return false;
       if(fManager && o.manager!==fManager)return false;
@@ -1279,7 +1311,7 @@ const DATES=D.dates||[];
   window.ocGoPage=function(p){page=p;ocRender();};
   window.ocReset=function(){
     ['ocSearch','ocSite','ocPeriod','ocContact','ocManager'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    sortKey='';sortDir=1;page=1;ocRender();
+    ocSelectedSite='';sortKey='';sortDir=1;page=1;ocRender();
   };
 
   window.ocExport=function(){
