@@ -198,7 +198,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <div class="main-tabs" id="mainTabs">
   <div class="main-tab active" data-tab="overview">概览</div>
   <div class="main-tab" data-tab="rider">站点明细</div>
-  <div class="main-tab" data-tab="org_feedback">归因标签</div>
+  <div class="main-tab" data-tab="org_feedback">逐单盘点</div>
   <div class="main-tab" data-tab="review" style="position:relative"><span style="background:linear-gradient(135deg,#ff6b6b,#ee5a24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">复盘</span><span style="position:absolute;top:4px;right:-4px;width:7px;height:7px;background:#ff3b30;border-radius:50%;animation:pulse-dot 2s infinite"></span></div>
 </div>
 </div>
@@ -422,21 +422,59 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 </div>
 </div>
 
-<!-- ====== TAB: 组织运力反馈 ====== -->
+<!-- ====== TAB: 逐单盘点 ====== -->
 <div class="tab-content" id="tab-org_feedback">
 <div class="tab-panel">
-  <div class="card-title" style="margin-bottom:4px">归因标签</div>
-  <div class="card-desc" style="margin-bottom:14px">除普众外的组织运力骑手，按站点分组、不完美单量倒序排列，用于分队跟进反馈</div>
+  <div class="card-title" style="margin-bottom:4px">逐单盘点</div>
+  <div class="card-desc" style="margin-bottom:14px">订单ID · 骑手 · 站点 · 对接人 · 站长 · 时段</div>
 
-  <div class="filter-bar" id="orgFilterBar" style="background:linear-gradient(135deg,rgba(0,122,255,.06),rgba(0,122,255,.02));border:1.5px solid rgba(0,122,255,.18);padding:14px 20px">
-    <span style="display:inline-flex;align-items:center;gap:6px">
-      <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:#007aff;color:#fff;font-size:13px;font-weight:700">&#9782;</span>
-      <label style="font-size:13px;font-weight:700;color:#1d1d1f">筛选站点</label>
-    </span>
-    <select id="orgTeamFilter" onchange="filterOrgTeam()" style="padding:7px 14px;border:1.5px solid rgba(0,122,255,.25);border-radius:10px;font-size:13px;font-weight:600;background:#fff;color:#1d1d1f;min-width:200px;transition:all .2s"><option value="">全部站点</option></select>
-    <span id="orgFilterInfo" style="font-size:12px;color:#007aff;font-weight:600;margin-left:auto;background:rgba(0,122,255,.06);padding:4px 12px;border-radius:8px"></span>
+  <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 22px;min-width:120px;text-align:center">
+      <div id="ocStatTotal" style="font-size:26px;font-weight:800;color:#1d1d1f">0</div>
+      <div style="font-size:12px;color:#86868b;margin-top:4px">订单总数</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 22px;min-width:120px;text-align:center">
+      <div id="ocStatRiders" style="font-size:26px;font-weight:800;color:#1d1d1f">0</div>
+      <div style="font-size:12px;color:#86868b;margin-top:4px">骑手数</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 22px;min-width:120px;text-align:center">
+      <div id="ocStatSites" style="font-size:26px;font-weight:800;color:#1d1d1f">0</div>
+      <div style="font-size:12px;color:#86868b;margin-top:4px">站点数</div>
+    </div>
   </div>
-  <div id="orgTeamContainer"></div>
+
+  <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <input id="ocSearch" type="text" placeholder="搜索订单ID/骑手/站点/对接人..." style="flex:1;min-width:240px;padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;outline:none" oninput="ocRender()">
+    <select id="ocSite" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:200px" onchange="ocRender()"><option value="">全部站点</option></select>
+    <select id="ocPeriod" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:120px" onchange="ocRender()"><option value="">全部时段</option></select>
+    <select id="ocContact" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部对接人</option></select>
+    <select id="ocManager" style="padding:8px 14px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff;min-width:140px" onchange="ocRender()"><option value="">全部站长</option></select>
+    <button onclick="ocReset()" style="padding:8px 16px;background:#f5f5f7;color:#1d1d1f;border:1px solid #e8e8ed;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">重置</button>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+    <button onclick="ocExport()" style="padding:8px 18px;background:#635bff;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(99,91,255,.3)">导出CSV</button>
+    <span id="ocCountInfo" style="margin-left:auto;font-size:12px;color:#86868b;font-weight:600">0 / 0 条</span>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table id="ocTable" style="width:100%;border-collapse:collapse;font-size:14px">
+        <thead style="background:#fafafa">
+          <tr>
+            <th class="oc-th" data-sort="id" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">订单ID <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
+            <th class="oc-th" data-sort="rider" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">骑手姓名 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
+            <th class="oc-th" data-sort="site" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">站点名称 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
+            <th class="oc-th" data-sort="contact" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">对接人</th>
+            <th class="oc-th" data-sort="manager" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">站长</th>
+            <th class="oc-th" data-sort="period" style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">时段 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
+          </tr>
+        </thead>
+        <tbody id="ocTbody"></tbody>
+      </table>
+    </div>
+    <div id="ocPager" style="padding:14px 16px;display:flex;gap:8px;align-items:center;justify-content:center;border-top:1px solid #f0f0f2"></div>
+  </div>
 </div>
 </div>
 
@@ -1112,88 +1150,139 @@ const DATES=D.dates||[];
   };
 })();
 
-/* ===== Org Feedback Tab ===== */
+/* ===== Order Checklist Tab (逐单盘点) ===== */
 (function(){
-  const riders=D.by_rider||[];
-  const orgRiders=riders.filter(r=>{
-    const caps=(r.cap_line||'').split(', ');
-    return !caps.every(c=>c==='普众'||c==='-'||c==='大网-其他'||c==='');
-  });
-  const badgeOrg=document.getElementById('badge-org');
-  if(badgeOrg)badgeOrg.remove();
-
-  const teamMap={};
-  orgRiders.forEach(r=>{
-    const team=(r.team&&r.team!=='-')?r.team:(r.team_name||'-');
-    if(!teamMap[team])teamMap[team]={riders:[],total:0};
-    teamMap[team].riders.push(r);
-    teamMap[team].total+=r.total;
-  });
-  const teamOrder=Object.entries(teamMap).sort((a,b)=>b[1].total-a[1].total);
-
-  const teamSel=document.getElementById('orgTeamFilter');
-  teamOrder.forEach(([t])=>{
-    const o=document.createElement('option');o.value=t;o.textContent=t+' ('+teamMap[t].riders.length+'人)';teamSel.appendChild(o);
-  });
-
-  const container=document.getElementById('orgTeamContainer');
-  const dateLabelHdrs=DATES.map(d=>{
-    const dLabel=d.length===8?(d.slice(4,6)+'/'+d.slice(6)):d;
-    return `<th style="background:#e8f5e9;font-size:11px">${dLabel}</th>`;
-  }).join('');
-
-  teamOrder.forEach(([team,info])=>{
-    const section=document.createElement('div');
-    section.className='card org-team-section';
-    section.dataset.team=team;
-    let html=`<h2 onclick="this.parentElement.querySelector('.team-body').style.display=this.parentElement.querySelector('.team-body').style.display==='none'?'':'none'">
-      <span style="flex-shrink:1;min-width:0;font-size:14px;font-weight:700">${team}${contactsBadge(team)}</span>
-      <span class="team-badge">${info.riders.length} 人</span>
-      <span class="team-stat">累计 <b style="color:#ff3b30;font-size:18px">${info.total}</b> 单</span>
-    </h2>`;
-    html+=`<div class="team-body"><div class="detail-wrap" style="max-height:400px"><table><thead><tr>
-      <th>#</th><th>骑手姓名</th><th>骑手ID</th><th>团队</th><th>代理商</th><th>运力线</th>
-      <th style="background:#fff8e1;font-weight:700">总单</th>
-      <th>超时</th><th>未妥投</th><th>提前/虚假</th><th>不满意</th>
-      ${dateLabelHdrs}
-      <th>归因标签</th><th>反馈备注</th>
-    </tr></thead><tbody>`;
-    info.riders.sort((a,b)=>b.total-a.total).forEach((r,idx)=>{
-      const causeTags=Object.entries(r.causes||{}).slice(0,4).map(([c,n])=>`<span class="cause-tag ${causeClass(c)}">${c}(${n})</span>`).join(' ');
-      let dateCells='';
-      DATES.forEach(d=>{
-        const cnt=(r.by_date||{})[d]||0;
-        dateCells+=`<td style="text-align:center;${cnt>0?'color:#ff3b30;font-weight:600':''}">${cnt}</td>`;
+  const SC=D.station_contacts||{};
+  const allOrders=[];
+  (D.by_rider||[]).forEach(r=>{
+    (r.orders||[]).forEach(o=>{
+      const site=o['团队名称']||'-';
+      const sc=SC[site]||{};
+      allOrders.push({
+        id: o['订单id']||'-',
+        rider: r.name||'-',
+        site: site,
+        contact: sc.contact||'',
+        manager: sc.manager||'',
+        period: o['新时段']||'-'
       });
-      html+=`<tr><td>${idx+1}</td><td><b>${r.name}</b></td><td>${r.id}</td><td>${r.team_name||'-'}</td><td>${r.agent_name||'-'}</td><td>${r.cap_line}</td><td style="background:#fff8e1"><b style="color:#e65100;font-size:14px">${r.total}</b></td><td>${r.timeout||0}</td><td>${r.no_deliver||0}</td><td>${r.early_fake||0}</td><td>${r.unsat||0}</td>${dateCells}<td class="causes-cell">${causeTags}</td><td></td></tr>`;
     });
-    html+=`</tbody></table></div></div>`;
-    section.innerHTML=html;
-    container.appendChild(section);
   });
 
-  window.filterOrgTeam=function(){
-    const sel=document.getElementById('orgTeamFilter').value;
-    const selEl=document.getElementById('orgTeamFilter');
-    const bar=document.getElementById('orgFilterBar');
-    // Highlight when a specific site is selected
-    if(sel){
-      selEl.style.background='linear-gradient(135deg,#007aff,#0055d4)';selEl.style.color='#fff';selEl.style.borderColor='#007aff';
-      bar.style.background='linear-gradient(135deg,rgba(0,122,255,.1),rgba(0,122,255,.04))';
-      bar.style.borderColor='rgba(0,122,255,.3)';
-    }else{
-      selEl.style.background='#fff';selEl.style.color='#1d1d1f';selEl.style.borderColor='rgba(0,122,255,.25)';
-      bar.style.background='linear-gradient(135deg,rgba(0,122,255,.06),rgba(0,122,255,.02))';
-      bar.style.borderColor='rgba(0,122,255,.18)';
-    }
-    // Keep option elements readable
-    selEl.querySelectorAll('option').forEach(o=>{o.style.background='#fff';o.style.color='#1d1d1f';});
-    document.querySelectorAll('.org-team-section').forEach(s=>{
-      s.style.display=(!sel||s.dataset.team===sel)?'':'none';
+  // Stats
+  const uniqRiders=new Set(allOrders.map(o=>o.rider).filter(v=>v&&v!=='-'));
+  const uniqSites=new Set(allOrders.map(o=>o.site).filter(v=>v&&v!=='-'));
+  const elT=document.getElementById('ocStatTotal');if(elT)elT.textContent=allOrders.length;
+  const elR=document.getElementById('ocStatRiders');if(elR)elR.textContent=uniqRiders.size;
+  const elS=document.getElementById('ocStatSites');if(elS)elS.textContent=uniqSites.size;
+
+  // Populate dropdowns
+  const sites=[...new Set(allOrders.map(o=>o.site).filter(v=>v&&v!=='-'))].sort();
+  const periods=[...new Set(allOrders.map(o=>o.period).filter(v=>v&&v!=='-'))].sort();
+  const contacts=[...new Set(allOrders.map(o=>o.contact).filter(v=>v))].sort();
+  const managers=[...new Set(allOrders.map(o=>o.manager).filter(v=>v))].sort();
+  const ocSite=document.getElementById('ocSite');
+  const ocPeriod=document.getElementById('ocPeriod');
+  const ocContact=document.getElementById('ocContact');
+  const ocManager=document.getElementById('ocManager');
+  if(ocSite)sites.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocSite.appendChild(o);});
+  if(ocPeriod)periods.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocPeriod.appendChild(o);});
+  if(ocContact)contacts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocContact.appendChild(o);});
+  if(ocManager)managers.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ocManager.appendChild(o);});
+
+  let sortKey='', sortDir=1, page=1, pageSize=50;
+
+  function getFiltered(){
+    const kw=(document.getElementById('ocSearch')?.value||'').trim().toLowerCase();
+    const fSite=document.getElementById('ocSite')?.value||'';
+    const fPeriod=document.getElementById('ocPeriod')?.value||'';
+    const fContact=document.getElementById('ocContact')?.value||'';
+    const fManager=document.getElementById('ocManager')?.value||'';
+    return allOrders.filter(o=>{
+      if(fSite && o.site!==fSite)return false;
+      if(fPeriod && o.period!==fPeriod)return false;
+      if(fContact && o.contact!==fContact)return false;
+      if(fManager && o.manager!==fManager)return false;
+      if(kw){
+        const blob=(o.id+' '+o.rider+' '+o.site+' '+o.contact+' '+o.manager+' '+o.period).toLowerCase();
+        if(!blob.includes(kw))return false;
+      }
+      return true;
     });
-    const shown=sel?1:teamOrder.length;
-    document.getElementById('orgFilterInfo').textContent=`显示 ${shown} / ${teamOrder.length} 个站点`;
+  }
+
+  function sortRows(rows){
+    if(!sortKey)return rows;
+    const arr=rows.slice();
+    arr.sort((a,b)=>{
+      const va=a[sortKey]||'',vb=b[sortKey]||'';
+      if(va<vb)return -1*sortDir;
+      if(va>vb)return 1*sortDir;
+      return 0;
+    });
+    return arr;
+  }
+
+  window.ocRender=function(){
+    const filtered=sortRows(getFiltered());
+    const total=filtered.length;
+    const totalPages=Math.max(1,Math.ceil(total/pageSize));
+    if(page>totalPages)page=totalPages;
+    if(page<1)page=1;
+    const start=(page-1)*pageSize;
+    const slice=filtered.slice(start,start+pageSize);
+    const tbody=document.getElementById('ocTbody');
+    if(!tbody)return;
+    tbody.innerHTML=slice.map(o=>{
+      const cBadge=o.contact?`<span style="display:inline-block;padding:3px 9px;background:rgba(149,76,233,.12);color:#7e3ff2;border-radius:6px;font-size:12px;font-weight:600">@${o.contact}</span>`:'<span style="color:#c8c8cd">-</span>';
+      const mBadge=o.manager?`<span style="display:inline-block;padding:3px 9px;background:rgba(245,158,11,.14);color:#b45309;border-radius:6px;font-size:12px;font-weight:600">@${o.manager}</span>`:'<span style="color:#c8c8cd">-</span>';
+      const pSpan=o.period&&o.period!=='-'?`<span style="color:#635bff;font-weight:600">${o.period}</span>`:'<span style="color:#c8c8cd">-</span>';
+      return `<tr style="border-bottom:1px solid #f0f0f2"><td style="padding:11px 14px;font-family:Menlo,Monaco,Consolas,monospace;font-size:13px;font-weight:700;color:#1d1d1f">${o.id}</td><td style="padding:11px 14px;font-weight:600;color:#1d1d1f">${o.rider}</td><td style="padding:11px 14px;color:#1d1d1f">${o.site}</td><td style="padding:11px 14px">${cBadge}</td><td style="padding:11px 14px">${mBadge}</td><td style="padding:11px 14px">${pSpan}</td></tr>`;
+    }).join('');
+    const ci=document.getElementById('ocCountInfo');if(ci)ci.textContent=`${total} / ${allOrders.length} 条`;
+
+    // Pager
+    const pager=document.getElementById('ocPager');
+    if(pager){
+      let pHtml='';
+      pHtml+=`<button onclick="ocGoPage(${page-1})" ${page<=1?'disabled':''} style="padding:6px 12px;border:1px solid #e8e8ed;background:#fff;border-radius:8px;cursor:${page<=1?'not-allowed':'pointer'};font-size:12px;color:${page<=1?'#c8c8cd':'#1d1d1f'}">‹ 上一页</button>`;
+      pHtml+=`<span style="font-size:13px;color:#1d1d1f;font-weight:600">${page} / ${totalPages}</span>`;
+      pHtml+=`<button onclick="ocGoPage(${page+1})" ${page>=totalPages?'disabled':''} style="padding:6px 12px;border:1px solid #e8e8ed;background:#fff;border-radius:8px;cursor:${page>=totalPages?'not-allowed':'pointer'};font-size:12px;color:${page>=totalPages?'#c8c8cd':'#1d1d1f'}">下一页 ›</button>`;
+      pager.innerHTML=pHtml;
+    }
   };
+
+  window.ocGoPage=function(p){page=p;ocRender();};
+  window.ocReset=function(){
+    ['ocSearch','ocSite','ocPeriod','ocContact','ocManager'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    sortKey='';sortDir=1;page=1;ocRender();
+  };
+
+  window.ocExport=function(){
+    const rows=sortRows(getFiltered());
+    const head=['订单ID','骑手姓名','站点名称','对接人','站长','时段'];
+    const lines=[head.join(',')];
+    rows.forEach(o=>{
+      const f=v=>'"'+(v||'').toString().replace(/"/g,'""')+'"';
+      lines.push([f(o.id),f(o.rider),f(o.site),f(o.contact),f(o.manager),f(o.period)].join(','));
+    });
+    const csv='\uFEFF'+lines.join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='逐单盘点_'+(DATES[0]||'export')+'.csv';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  };
+
+  // Sort headers
+  document.querySelectorAll('.oc-th').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const k=th.dataset.sort;if(!k)return;
+      if(sortKey===k)sortDir=-sortDir;else{sortKey=k;sortDir=1;}
+      ocRender();
+    });
+  });
+
+  ocRender();
 })();
 
 /* ===== Export Excel ===== */
