@@ -463,21 +463,34 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
   </div>
 
   <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;overflow:hidden">
-    <div style="overflow-x:auto">
-      <table id="ocTable" style="width:100%;border-collapse:collapse;font-size:13px">
+    <div>
+      <table id="ocTable" style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed">
+        <colgroup>
+          <col style="width:11%"><!-- 订单ID -->
+          <col style="width:6%"><!-- 运单状态 -->
+          <col style="width:5%"><!-- 骑手 -->
+          <col style="width:18%"><!-- 团队 -->
+          <col style="width:6%"><!-- 对接人 -->
+          <col style="width:6%"><!-- 站长 -->
+          <col style="width:11%"><!-- 代理商 -->
+          <col style="width:14%"><!-- 商户 -->
+          <col style="width:5%"><!-- 时段 -->
+          <col style="width:7%"><!-- 物流预测T(分) -->
+          <col style="width:11%"><!-- 判定类型 -->
+        </colgroup>
         <thead style="background:#fafafa">
           <tr>
-            <th class="oc-th" data-sort="id" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">订单ID <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
-            <th class="oc-th" data-sort="status" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">运单状态 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
-            <th class="oc-th" data-sort="rider" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">骑手 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
-            <th class="oc-th" data-sort="site" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">团队 <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
-            <th class="oc-th" data-sort="contact" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">对接人</th>
-            <th class="oc-th" data-sort="manager" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">站长</th>
-            <th class="oc-th" data-sort="agent" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">代理商</th>
-            <th class="oc-th" data-sort="merchant" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">商户</th>
-            <th class="oc-th" data-sort="period" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">时段</th>
-            <th class="oc-th" data-sort="predT" style="padding:11px 12px;text-align:right;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">物流预测T(分) <span style="color:#c8c8cd;font-size:10px">▲▼</span></th>
-            <th class="oc-th" data-sort="verdict" style="padding:11px 12px;text-align:left;font-size:12px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;white-space:nowrap">判定类型</th>
+            <th class="oc-th" data-sort="id" style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">订单ID <span style="color:#c8c8cd;font-size:9px">▲▼</span></th>
+            <th class="oc-th" data-sort="status" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">状态 <span style="color:#c8c8cd;font-size:9px">▲▼</span></th>
+            <th class="oc-th" data-sort="rider" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">骑手 <span style="color:#c8c8cd;font-size:9px">▲▼</span></th>
+            <th class="oc-th" data-sort="site" style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">团队 <span style="color:#c8c8cd;font-size:9px">▲▼</span></th>
+            <th class="oc-th" data-sort="contact" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">对接人</th>
+            <th class="oc-th" data-sort="manager" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">站长</th>
+            <th class="oc-th" data-sort="agent" style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">代理商</th>
+            <th class="oc-th" data-sort="merchant" style="padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">商户</th>
+            <th class="oc-th" data-sort="period" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">时段</th>
+            <th class="oc-th" data-sort="predT" style="padding:10px 6px;text-align:right;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">预测T(分) <span style="color:#c8c8cd;font-size:9px">▲▼</span></th>
+            <th class="oc-th" data-sort="verdict" style="padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer">判定类型</th>
           </tr>
         </thead>
         <tbody id="ocTbody"></tbody>
@@ -1319,29 +1332,30 @@ const DATES=D.dates||[];
     const tbody=document.getElementById('ocTbody');
     if(!tbody)return;
     tbody.innerHTML=slice.map(o=>{
-      const cBadge=o.contact?`<span style="display:inline-block;padding:3px 9px;background:rgba(149,76,233,.12);color:#7e3ff2;border-radius:6px;font-size:12px;font-weight:600">@${o.contact}</span>`:'<span style="color:#c8c8cd">-</span>';
-      const mBadge=o.manager?`<span style="display:inline-block;padding:3px 9px;background:rgba(245,158,11,.14);color:#b45309;border-radius:6px;font-size:12px;font-weight:600">@${o.manager}</span>`:'<span style="color:#c8c8cd">-</span>';
+      const cBadge=o.contact?`<span style="display:inline-block;padding:2px 6px;background:rgba(149,76,233,.12);color:#7e3ff2;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap">@${o.contact}</span>`:'<span style="color:#c8c8cd">-</span>';
+      const mBadge=o.manager?`<span style="display:inline-block;padding:2px 6px;background:rgba(245,158,11,.14);color:#b45309;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap">@${o.manager}</span>`:'<span style="color:#c8c8cd">-</span>';
       const pSpan=o.period&&o.period!=='-'?`<span style="color:#635bff;font-weight:600">${o.period}</span>`:'<span style="color:#c8c8cd">-</span>';
       const VCOLOR={'超时':'#ff9500','未妥投':'#ff3b30','提前/虚假':'#af52de','不满意':'#007aff'};
       const verdictH=o.cats.length?o.cats.map(c=>{
         const col=VCOLOR[c]||'#86868b';
         const txt=(c==='不满意'&&o.unsatNote)?(c+'·'+o.unsatNote):c;
-        return `<span style="display:inline-block;padding:3px 9px;background:${col}1f;color:${col};border-radius:6px;font-size:11px;font-weight:600;margin:1px 2px">${txt}</span>`;
+        return `<span style="display:inline-block;padding:2px 6px;background:${col}1f;color:${col};border-radius:5px;font-size:10px;font-weight:600;margin:1px 1px;white-space:nowrap">${txt}</span>`;
       }).join(''):'<span style="color:#c8c8cd">-</span>';
       const statusColor=(o.status&&o.status!=='-'&&o.status!=='配送成功')?'color:#ff3b30;font-weight:600':'color:#1d1d1f';
       const predTH=(o.predT!==null)?`<span style="font-weight:600;${o.predT>=60?'color:#ff3b30':'color:#1d1d1f'}">${o.predTText}</span>`:'<span style="color:#c8c8cd">-</span>';
+      const TDBASE='padding:8px 6px;vertical-align:middle;word-break:break-word';
       return `<tr style="border-bottom:1px solid #f0f0f2">`
-        +`<td style="padding:10px 12px;font-family:Menlo,Monaco,Consolas,monospace;font-size:12px;font-weight:700;color:#1d1d1f;white-space:nowrap">${o.id}</td>`
-        +`<td style="padding:10px 12px;${statusColor};white-space:nowrap">${o.status}</td>`
-        +`<td style="padding:10px 12px;font-weight:600;color:#1d1d1f;white-space:nowrap">${o.rider}</td>`
-        +`<td style="padding:10px 12px;color:#1d1d1f">${o.site}</td>`
-        +`<td style="padding:10px 12px">${cBadge}</td>`
-        +`<td style="padding:10px 12px">${mBadge}</td>`
-        +`<td style="padding:10px 12px;color:#86868b">${o.agent}</td>`
-        +`<td style="padding:10px 12px;color:#1d1d1f">${o.merchant}</td>`
-        +`<td style="padding:10px 12px">${pSpan}</td>`
-        +`<td style="padding:10px 12px;text-align:right">${predTH}</td>`
-        +`<td style="padding:10px 12px">${verdictH}</td>`
+        +`<td style="${TDBASE};padding-left:8px;font-family:Menlo,Monaco,Consolas,monospace;font-size:11px;font-weight:700;color:#1d1d1f;word-break:break-all">${o.id}</td>`
+        +`<td style="${TDBASE};text-align:center;${statusColor};font-size:11px">${o.status}</td>`
+        +`<td style="${TDBASE};text-align:center;font-weight:600;color:#1d1d1f;font-size:12px">${o.rider}</td>`
+        +`<td style="${TDBASE};padding-left:8px;color:#1d1d1f;font-size:12px;line-height:1.4">${o.site}</td>`
+        +`<td style="${TDBASE};text-align:center">${cBadge}</td>`
+        +`<td style="${TDBASE};text-align:center">${mBadge}</td>`
+        +`<td style="${TDBASE};padding-left:8px;color:#86868b;font-size:11px;line-height:1.4">${o.agent}</td>`
+        +`<td style="${TDBASE};padding-left:8px;color:#1d1d1f;font-size:12px;line-height:1.4">${o.merchant}</td>`
+        +`<td style="${TDBASE};text-align:center">${pSpan}</td>`
+        +`<td style="${TDBASE};text-align:right;padding-right:10px">${predTH}</td>`
+        +`<td style="${TDBASE};text-align:center">${verdictH}</td>`
         +`</tr>`;
     }).join('');
     const ci=document.getElementById('ocCountInfo');if(ci)ci.textContent=`${total} / ${allOrders.length} 条`;
