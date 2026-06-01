@@ -426,7 +426,7 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
 <div class="tab-content" id="tab-org_feedback">
 <div class="tab-panel">
   <div class="card-title" style="margin-bottom:4px">逐单盘点</div>
-  <div class="card-desc" style="margin-bottom:14px">订单ID · 运单状态 · 骑手 · 团队 · 对接人 · 站长 · 代理商 · 商户 · 时段 · 物流预测T(分) · 判定类型</div>
+  <div class="card-desc" style="margin-bottom:14px">订单ID · 日期 · 运单状态 · 骑手 · 团队 · 对接人 · 站长 · 商户 · 时段 · 物流预测T(分) · 判定类型</div>
 
   <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">
     <div style="background:#fff;border:1px solid #e8e8ed;border-radius:12px;padding:14px 22px;min-width:120px;text-align:center">
@@ -466,27 +466,27 @@ tbody tr:hover td{background:rgba(0,122,255,.04) !important}
     <div>
       <table id="ocTable" style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed">
         <colgroup>
-          <col style="width:11%"><!-- 订单ID -->
+          <col style="width:12%"><!-- 订单ID -->
+          <col style="width:6%"><!-- 日期 -->
           <col style="width:6%"><!-- 运单状态 -->
           <col style="width:5%"><!-- 骑手 -->
-          <col style="width:18%"><!-- 团队 -->
+          <col style="width:20%"><!-- 团队 -->
           <col style="width:6%"><!-- 对接人 -->
           <col style="width:6%"><!-- 站长 -->
-          <col style="width:11%"><!-- 代理商 -->
-          <col style="width:14%"><!-- 商户 -->
-          <col style="width:5%"><!-- 时段 -->
+          <col style="width:15%"><!-- 商户 -->
+          <col style="width:6%"><!-- 时段 -->
           <col style="width:7%"><!-- 物流预测T(分) -->
           <col style="width:11%"><!-- 判定类型 -->
         </colgroup>
         <thead style="background:#fafafa">
           <tr>
             <th class="oc-th" data-sort="id" style="padding:8px 4px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">订单ID</th>
+            <th class="oc-th" data-sort="date" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">日期</th>
             <th class="oc-th" data-sort="status" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">状态</th>
             <th class="oc-th" data-sort="rider" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">骑手</th>
             <th class="oc-th" data-sort="site" style="padding:8px 4px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">团队</th>
             <th class="oc-th" data-sort="contact" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">对接人</th>
             <th class="oc-th" data-sort="manager" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">站长</th>
-            <th class="oc-th" data-sort="agent" style="padding:8px 4px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">代理商</th>
             <th class="oc-th" data-sort="merchant" style="padding:8px 4px;text-align:left;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">商户</th>
             <th class="oc-th" data-sort="period" style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">时段</th>
             <th class="oc-th" data-sort="predT" style="padding:8px 4px;text-align:right;font-size:11px;font-weight:700;color:#1d1d1f;border-bottom:1.5px solid #e8e8ed;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">预测T</th>
@@ -1190,12 +1190,12 @@ const DATES=D.dates||[];
       const predTNum=(predT&&predT!=='-')?parseFloat(predT):null;
       allOrders.push({
         id: o['订单id']||'-',
+        date: o['日期']||'',
         status: o['运单状态']||'-',
         rider: r.name||'-',
         site: site,
         contact: sc.contact||'',
         manager: sc.manager||'',
-        agent: o['代理商名称']||'-',
         merchant: o['商户名称']||'-',
         period: o['新时段']||'-',
         predT: predTNum,
@@ -1292,7 +1292,7 @@ const DATES=D.dates||[];
         else{if(!o.cats.includes(fVerdict))return false;}
       }
       if(kw){
-        const blob=(o.id+' '+o.status+' '+o.rider+' '+o.site+' '+o.contact+' '+o.manager+' '+o.agent+' '+o.merchant+' '+o.period+' '+o.verdict).toLowerCase();
+        const blob=(o.id+' '+o.date+' '+o.status+' '+o.rider+' '+o.site+' '+o.contact+' '+o.manager+' '+o.merchant+' '+o.period+' '+o.verdict).toLowerCase();
         if(!blob.includes(kw))return false;
       }
       return true;
@@ -1344,14 +1344,15 @@ const DATES=D.dates||[];
       const statusColor=(o.status&&o.status!=='-'&&o.status!=='配送成功')?'color:#ff3b30;font-weight:600':'color:#1d1d1f';
       const predTH=(o.predT!==null)?`<span style="font-weight:600;${o.predT>=60?'color:#ff3b30':'color:#1d1d1f'}">${o.predTText}</span>`:'<span style="color:#c8c8cd">-</span>';
       const TD='padding:8px 4px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      const dateStr=o.date?o.date.replace(/^2026/,'').replace(/^(\d{2})(\d{2})$/,'$1/$2'):'';
       return `<tr style="border-bottom:1px solid #f0f0f2">`
         +`<td style="${TD};padding-left:8px;font-family:Menlo,Monaco,Consolas,monospace;font-size:11px;font-weight:700;color:#1d1d1f" title="${o.id}">${o.id}</td>`
+        +`<td style="${TD};text-align:center;font-size:11px;color:#86868b">${dateStr}</td>`
         +`<td style="${TD};text-align:center;${statusColor};font-size:11px">${o.status}</td>`
         +`<td style="${TD};text-align:center;font-weight:600;color:#1d1d1f;font-size:12px">${o.rider}</td>`
         +`<td style="${TD};padding-left:8px;color:#1d1d1f;font-size:11px" title="${o.site}">${o.site}</td>`
         +`<td style="${TD};text-align:center">${cBadge}</td>`
         +`<td style="${TD};text-align:center">${mBadge}</td>`
-        +`<td style="${TD};padding-left:8px;color:#86868b;font-size:11px" title="${o.agent}">${o.agent}</td>`
         +`<td style="${TD};padding-left:8px;color:#1d1d1f;font-size:11px" title="${o.merchant}">${o.merchant}</td>`
         +`<td style="${TD};text-align:center">${pSpan}</td>`
         +`<td style="${TD};text-align:right;padding-right:8px">${predTH}</td>`
@@ -1400,7 +1401,7 @@ const DATES=D.dates||[];
       const FONT='宋体';
 
       // ----- Header row (row 1) -----
-      const headers=['订单ID','运单状态','骑手','团队','对接人','站长','代理商','商户','时段','物流预测T(分)','判定类型'];
+      const headers=['订单ID','日期','运单状态','骑手','团队','对接人','站长','商户','时段','物流预测T(分)','判定类型'];
       const hr=ws.addRow(headers);
       hr.height=32;
       hr.eachCell({includeEmpty:true},(cell)=>{
@@ -1418,7 +1419,8 @@ const DATES=D.dates||[];
       const VERDICT_COLOR={'超时':'FF9500','未妥投':'FF3B30','提前/虚假':'AF52DE','不满意':'007AFF'};
       rows.forEach((o,i)=>{
         const verdictText=o.cats.length?o.cats.map(c=>(c==='不满意'&&o.unsatNote)?(c+'·'+o.unsatNote):c).join(' / '):'-';
-        const r=ws.addRow([o.id||'',o.status||'',o.rider||'',o.site||'',o.contact||'',o.manager||'',o.agent||'',o.merchant||'',o.period||'',o.predT!==null?o.predT:'',verdictText]);
+        const dateDisp=o.date?o.date.replace(/^2026/,'').replace(/^(\d{2})(\d{2})$/,'$1/$2'):'';
+        const r=ws.addRow([o.id||'',dateDisp,o.status||'',o.rider||'',o.site||'',o.contact||'',o.manager||'',o.merchant||'',o.period||'',o.predT!==null?o.predT:'',verdictText]);
         r.height=26;
         const isAlt=(i%2===1);
         r.eachCell({includeEmpty:true},(cell)=>{
@@ -1430,35 +1432,36 @@ const DATES=D.dates||[];
         // 1 订单ID
         r.getCell(1).font={bold:true,size:11,color:{argb:'FF'+C.text},name:FONT};
         r.getCell(1).alignment={vertical:'middle',horizontal:'center'};
-        // 2 运单状态
-        const c2=r.getCell(2);
+        // 2 日期
+        r.getCell(2).alignment={vertical:'middle',horizontal:'center'};
+        r.getCell(2).font={size:11,color:{argb:'FF'+C.muted},name:FONT};
+        // 3 运单状态
+        const c3=r.getCell(3);
         if(o.status&&o.status!=='-'&&o.status!=='配送成功'){
-          c2.font={bold:true,size:11,color:{argb:'FFFF3B30'},name:FONT};
+          c3.font={bold:true,size:11,color:{argb:'FFFF3B30'},name:FONT};
         }
-        c2.alignment={vertical:'middle',horizontal:'center'};
-        // 3 骑手
-        r.getCell(3).font={bold:true,size:11,color:{argb:'FF'+C.text},name:FONT};
-        r.getCell(3).alignment={vertical:'middle',horizontal:'center'};
-        // 4 团队
-        r.getCell(4).alignment={vertical:'middle',horizontal:'left',indent:1};
-        // 5 对接人 (purple)
-        const c5=r.getCell(5);
-        if(o.contact){
-          c5.value='@'+o.contact;
-          c5.font={bold:true,size:11,color:{argb:'FF'+C.purple},name:FONT};
-          c5.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.purpleBg}};
-          c5.alignment={vertical:'middle',horizontal:'center'};
-        }else{c5.value='—';c5.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};c5.alignment={vertical:'middle',horizontal:'center'};}
-        // 6 站长 (amber)
+        c3.alignment={vertical:'middle',horizontal:'center'};
+        // 4 骑手
+        r.getCell(4).font={bold:true,size:11,color:{argb:'FF'+C.text},name:FONT};
+        r.getCell(4).alignment={vertical:'middle',horizontal:'center'};
+        // 5 团队
+        r.getCell(5).alignment={vertical:'middle',horizontal:'left',indent:1};
+        // 6 对接人 (purple)
         const c6=r.getCell(6);
-        if(o.manager){
-          c6.value='@'+o.manager;
-          c6.font={bold:true,size:11,color:{argb:'FF'+C.amber},name:FONT};
-          c6.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.amberBg}};
+        if(o.contact){
+          c6.value='@'+o.contact;
+          c6.font={bold:true,size:11,color:{argb:'FF'+C.purple},name:FONT};
+          c6.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.purpleBg}};
           c6.alignment={vertical:'middle',horizontal:'center'};
         }else{c6.value='—';c6.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};c6.alignment={vertical:'middle',horizontal:'center'};}
-        // 7 代理商
-        r.getCell(7).font={size:11,color:{argb:'FF6B7280'},name:FONT};
+        // 7 站长 (amber)
+        const c7=r.getCell(7);
+        if(o.manager){
+          c7.value='@'+o.manager;
+          c7.font={bold:true,size:11,color:{argb:'FF'+C.amber},name:FONT};
+          c7.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.amberBg}};
+          c7.alignment={vertical:'middle',horizontal:'center'};
+        }else{c7.value='—';c7.font={size:11,color:{argb:'FFC8C8CD'},name:FONT};c7.alignment={vertical:'middle',horizontal:'center'};}
         // 8 商户
         // 9 时段
         const c9=r.getCell(9);
